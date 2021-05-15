@@ -1,0 +1,12 @@
+<Bindings>
+	<Binding name="INFINITYSEARCH_OPEN" description="Open." runOnUp="true" header="BINDING_HEADER_INFINITYSEARCH_HEADER" category="InfinitySearch">
+		if ( keystate == "up" ) then
+			INFINITYSEARCH.show('');
+		end
+	</Binding>
+	<Binding name="CLICK InfinitySearchOption1:LeftButton" runOnUp="true" category="InfinitySearch"/>
+	<Binding name="CLICK InfinitySearchOption2:LeftButton" runOnUp="true" category="InfinitySearch"/>
+	<Binding name="CLICK InfinitySearchOption3:LeftButton" runOnUp="true" category="InfinitySearch"/>
+	<Binding name="CLICK InfinitySearchOption4:LeftButton" runOnUp="true" category="InfinitySearch"/>
+	<Binding name="CLICK InfinitySearchOption5:LeftButton" runOnUp="true" category="InfinitySearch"/>
+</Bindings>
