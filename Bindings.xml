@@ -1,7 +1,7 @@
 <Bindings>
-	<Binding name="INFINITYSEARCH_OPEN" description="Open." runOnUp="true" header="BINDING_HEADER_INFINITYSEARCH_HEADER" category="InfinitySearch">
+	<Binding name="INFINITYSEARCH_TOGGLE" description="Open." runOnUp="true" header="INFINITYSEARCH_HEADER" category="InfinitySearch">
 		if ( keystate == "up" ) then
-			INFINITYSEARCH.show('');
+			InfinitySearch.toggle();
 		end
 	</Binding>
 	<Binding name="CLICK InfinitySearchOption1:LeftButton" runOnUp="true" category="InfinitySearch"/>

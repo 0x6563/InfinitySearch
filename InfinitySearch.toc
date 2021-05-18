@@ -1,6 +1,11 @@
 ##Interface: 90001
 ##Title: InfinitySearch
 ##Notes: InfinitySearch
-## SavedVariables: IFTYS
-InfinitySearch.lua
+## SavedVariables: InfinitySearchDB
+
+embeds.xml
+Main.lua
+Config.lua
+Collections.lua
+Frames.lua
 Fuzzy.lua
