@@ -1,7 +1,8 @@
 # InfinitySearch
-#### Note: Still in early development
+
 ## Description 
 A fuzzy search omnibox allowing you quickly search through your collection of toys, mounts, battle pets, consumables and use them!
+
 ## Usage 
 - Set a keybind to **Toggle InfinitySearch** defaults to SHIFT-`
 - Hit said keybind
