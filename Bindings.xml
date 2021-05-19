@@ -1,12 +1,12 @@
 <Bindings>
-	<Binding name="INFINITYSEARCH_TOGGLE" description="Open." runOnUp="true" header="INFINITYSEARCH_HEADER" category="InfinitySearch">
+	<Binding name="INFINITYSEARCH_TOGGLE" description="Toggle Search Bar" runOnUp="true" category="Infinity Search">
 		if ( keystate == "up" ) then
 			InfinitySearch.toggle();
 		end
 	</Binding>
-	<Binding name="CLICK InfinitySearchOption1:LeftButton" runOnUp="true" category="InfinitySearch"/>
-	<Binding name="CLICK InfinitySearchOption2:LeftButton" runOnUp="true" category="InfinitySearch"/>
-	<Binding name="CLICK InfinitySearchOption3:LeftButton" runOnUp="true" category="InfinitySearch"/>
-	<Binding name="CLICK InfinitySearchOption4:LeftButton" runOnUp="true" category="InfinitySearch"/>
-	<Binding name="CLICK InfinitySearchOption5:LeftButton" runOnUp="true" category="InfinitySearch"/>
+	<Binding name="CLICK InfinitySearchOption1:LeftButton" runOnUp="true" category="Infinity Search"/>
+	<Binding name="CLICK InfinitySearchOption2:LeftButton" runOnUp="true" category="Infinity Search"/>
+	<Binding name="CLICK InfinitySearchOption3:LeftButton" runOnUp="true" category="Infinity Search"/>
+	<Binding name="CLICK InfinitySearchOption4:LeftButton" runOnUp="true" category="Infinity Search"/>
+	<Binding name="CLICK InfinitySearchOption5:LeftButton" runOnUp="true" category="Infinity Search"/>
 </Bindings>
