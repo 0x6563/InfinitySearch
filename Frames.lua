@@ -21,11 +21,19 @@ function addon:createFrames()
         f:SetMovable(true)
         f:SetClampedToScreen(true)
         f:SetScript("OnMouseDown", function(self, button)
-            if button == "LeftButton" then self:StartMoving() end
+            if addon.lockMovement == true then
+                return;
+            end
+            if button == "LeftButton" 
+                then self:StartMoving() 
+            end
         end)
         f:SetScript("OnMouseUp", function(self, button)
+            if addon.lockMovement == true then
+                return;
+            end
             point, relativeTo, relativePoint, x, y = self:GetPoint();
-            self.db.profile.position = {
+            addon.db.profile.position = {
                 point = point,
                 relativePoint = relativePoint,
                 x = x,
@@ -47,6 +55,20 @@ function addon:createFrames()
         eb:SetScript("OnTabPressed", function() addon:tabCycle() end);
         eb:SetScript("OnEnterPressed", function() addon:unfocus() end);
         eb:SetScript("OnTextChanged", function() addon:filter() end);
+
+        local db = CreateFrame("Frame", "InfinitySearchDragBox", InfinitySearchParent, "SecureHandlerBaseTemplate")
+        db:SetPoint("LEFT", cInset, 0)
+        db:SetPoint("RIGHT", -1 * cInset, 0)
+        db:SetPoint("TOP", 0)
+        db:SetPoint("BOTTOM", 0)
+        
+        local ff = db:CreateFontString("InfinitySearchDragBoxText", "HIGH")
+        ff:SetFont("Interface\\AddOns\\InfinitySearch\\fonts\\AlegreyaSansSC-ExtraBold.ttf", 18)
+        ff:SetPoint("TOPLEFT", f, "TOPLEFT", 42, 0)
+        ff:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 42, 0)
+        ff:SetText("Drag Me")
+        db:Hide();
+
         f:Show()
         addon:createOptions()
     end
@@ -60,7 +82,11 @@ end
 function addon:createOptions()
     local f = CreateFrame("Frame", "InfinitySearchOptions", InfinitySearchParent, BackdropTemplateMixin and "BackdropTemplate")
     local cInset = 8;
-    f:SetPoint("TOP", InfinitySearchParent, "BOTTOM", 12)
+    if addon.db.profile.direction == "down" then
+        f:SetPoint("TOP", InfinitySearchParent, "BOTTOM", 12)
+    else
+        f:SetPoint("BOTTOM", InfinitySearchParent, "TOP", 12)
+    end
     f:Show()
     addon:createOption(1)
     addon:createOption(2)
@@ -71,9 +97,16 @@ end
 
 function addon:createOption(n)
     local parent = InfinitySearchParent
-    if n > 1 then parent = addon.options[n - 1].frame end
+    if n > 1 then 
+        parent = addon.options[n - 1].frame 
+    end
+
     local f = CreateFrame("Button", "InfinitySearchOption" .. n, InfinitySearchOptions, BackdropTemplateMixin and "BackdropTemplate,SecureActionButtonTemplate")
-    f:SetPoint("TOP", parent, "BOTTOM", 12)
+    if addon.db.profile.direction == "down" then
+        f:SetPoint("TOP", parent, "BOTTOM", 12)
+    else
+        f:SetPoint("BOTTOM", parent, "TOP", 12)
+    end
     f:RegisterForClicks("AnyUp");
     f:SetSize(400, 40)
     f:SetBackdrop(addon.defaults.parentBackdrop)

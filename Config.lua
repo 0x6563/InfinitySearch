@@ -22,6 +22,7 @@ function addon:loadConfig ()
             opt3 = {backdropColor = {.15, .43, .96, 1}},
             opt4 = {backdropColor = {100, 0, .19, 1}},
             opt5 = {backdropColor = {100, .55, 0, 1}},
+            direction = "down",
             collections = {
                 toys = true,
                 pets = true,
@@ -31,7 +32,22 @@ function addon:loadConfig ()
             }
         }
     })
+    addon.db.profile.direction = addon.db.profile.direction or "down"
     local generalConfig = { 
+        Config:HeaderFactory('Positioning'),
+        {
+            type = 'toggle',
+            name = 'Lock Position',
+            get = function() return addon.lockMovement end,
+            set = function(_, val)  addon.lockMovement = val end
+        },
+        {
+            type = 'select',
+            name = 'Flyout Direction',
+            values = { up = "Up", down = "Down" },
+            get = function() return addon.db.profile.direction end,
+            set = function(_, val)  addon:updateFlyout(val) end
+        },
         Config:HeaderFactory('Collections'),
         Config:CollectionToggleFactory('Toys', 'toys'),
         Config:CollectionToggleFactory('Pets', 'pets'),

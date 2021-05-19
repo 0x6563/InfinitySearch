@@ -4,6 +4,7 @@ addon.list = {};
 addon.searchable = {};
 addon.options = {};
 addon.currentSelected = 1;
+addon.lockMovement = true;
 addon.defaults = {
     keybind = 'SHIFT-`',
     icon = "Interface\\Icons\\INV_Misc_EngGizmos_17",
@@ -17,7 +18,6 @@ addon.defaults = {
     }
 };
 
-_G['BINDING_HEADER_INFINITYSEARCH_HEADER'] = 'Infinity Search';
 _G['BINDING_NAME_INFINITYSEARCH_TOGGLE'] = 'Open Infinity Search';
 _G['BINDING_NAME_CLICK InfinitySearchOption1:LeftButton'] = 'Select Option 1';
 _G['BINDING_NAME_CLICK InfinitySearchOption2:LeftButton'] = 'Select Option 2';
@@ -52,8 +52,17 @@ end
 
 function addon:show(text)
     if InCombatLockdown() then return end
-    addon:populate()
-    InfinitySearchEditBox:SetText(text or "");
+    if addon.lockMovement == false then
+        InfinitySearchDragBox:Show();
+        InfinitySearchEditBox:Hide();
+        InfinitySearchParent:Show();
+        return;
+    end
+    
+    InfinitySearchDragBox:Hide();
+    InfinitySearchEditBox:Show();
+    addon:populate()    
+    InfinitySearchEditBox:SetText(text or ""); 
     InfinitySearchParent:Show();
     UnregisterAttributeDriver(InfinitySearchParent, "state-visibility");
     RegisterAttributeDriver(InfinitySearchParent, "state-visibility", "[combat] hide; show");
@@ -134,4 +143,27 @@ function addon:updateOption(n, o)
     addon.options[n].icon:SetTexture(o.icon)
     addon.options[n].frame:Show()
     addon.options[n].frame:SetAttribute("macrotext", o.macro);
+end
+
+function addon:updateFlyout(direction)
+    addon.db.profile.direction = direction;
+    
+    InfinitySearchOptions:ClearAllPoints() 
+    if addon.db.profile.direction == "down" then
+        InfinitySearchOptions:SetPoint("TOP", InfinitySearchParent, "BOTTOM", 12)
+    else
+        InfinitySearchOptions:SetPoint("BOTTOM", InfinitySearchParent, "TOP", 12)
+    end
+    local parent = InfinitySearchParent
+    for i, o in ipairs(addon.options) do
+        if i > 1 then 
+            parent = addon.options[i - 1].frame 
+        end
+            o.frame:ClearAllPoints() 
+        if addon.db.profile.direction == "down" then
+            o.frame:SetPoint("TOP", parent, "BOTTOM", 12)
+        else
+            o.frame:SetPoint("BOTTOM", parent, "TOP", 12)
+        end
+    end
 end
