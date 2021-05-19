@@ -44,7 +44,7 @@ function addon:createFrames()
         eb:SetAutoFocus(false)
         eb:SetFont("Interface\\AddOns\\InfinitySearch\\fonts\\AlegreyaSansSC-Bold.ttf", 20)
         eb:SetScript("OnEscapePressed", function() addon:close() end);
-        eb:SetScript("OnTabPressed", function() addon:cycleSelect() end);
+        eb:SetScript("OnTabPressed", function() addon:tabCycle() end);
         eb:SetScript("OnEnterPressed", function() addon:unfocus() end);
         eb:SetScript("OnTextChanged", function() addon:filter() end);
         f:Show()

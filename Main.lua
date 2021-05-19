@@ -67,15 +67,26 @@ function addon:close()
     ClearOverrideBindings(InfinitySearchOptions);
     InfinitySearchParent:Hide()
 end
-
-function addon:cycleSelect() addon:select(addon.currentSelected + 1) end
+function addon:tabCycle()
+    if (IsShiftKeyDown())  then
+        addon:select(addon.currentSelected - 1) 
+    else    
+        addon:select(addon.currentSelected + 1) 
+    end
+end
+function addon:cycleSelect() 
+    addon:select(addon.currentSelected + 1) 
+end
 
 function addon:select(n)
     local c = 0
     for i, o in ipairs(addon.options) do
         if o.frame:IsVisible() then c = c + 1 end
     end
-    if n > c then
+
+    if n < 1 then
+        addon.currentSelected = c
+    elseif n > c then
         addon.currentSelected = 1
     else
         addon.currentSelected = n
