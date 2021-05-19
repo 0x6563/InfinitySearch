@@ -72,16 +72,15 @@ function addon:populateToys()
     C_ToyBox.SetUncollectedShown(false)
 
     for i = 1, C_ToyBox.GetNumFilteredToys() do
-        local id, name, icon, isFavorite, hasFanfare =
-            C_ToyBox.GetToyInfo(C_ToyBox.GetToyFromIndex(i));
-        local o = {
-            id = id,
-            icon = icon,
-            name = name,
-            type = "Toy",
-            macro = string.format("%s %s", SLASH_USE_TOY1, name)
-        }
-        if C_ToyBox.IsToyUsable(o.id) then
+        local id, name, icon, isFavorite, hasFanfare = C_ToyBox.GetToyInfo(C_ToyBox.GetToyFromIndex(i));
+        if name and C_ToyBox.IsToyUsable(id) then
+            local o = {
+                id = id,
+                icon = icon,
+                name = name,
+                type = "Toy",
+                macro = string.format("%s %s", SLASH_USE_TOY1, name)
+            }
             table.insert(addon.list, o)
             table.insert(addon.searchable, o.type .. ": " .. o.name)
         end
