@@ -46,11 +46,10 @@ function addon:populatePets()
     C_PetJournal.SetAllPetSourcesChecked(true)
     C_PetJournal.SetAllPetTypesChecked(true)
     local exists = {}
-    for i = 1, C_PetJournal.GetNumMaxPets() do
-        local petID, speciesID, owned, customName, level, favorite, isRevoked,
-              speciesName, icon, petType, companionID, tooltip, description,
-              isWild, canBattle, isTradeable, isUnique, obtainable =
-            C_PetJournal.GetPetInfoByIndex(i);
+    local i = 1;
+    local petID, speciesID, owned, customName, level, favorite, isRevoked, speciesName, icon = C_PetJournal.GetPetInfoByIndex(i);
+    while (petID)
+    do
         if owned and exists[speciesName] == nil then
             local o = {
                 id = petID,
@@ -63,6 +62,8 @@ function addon:populatePets()
             table.insert(addon.searchable, o.type .. ": " .. o.name)
             exists[speciesName] = true;
         end
+        i = i + 1;
+        petID, speciesID, owned, customName, level, favorite, isRevoked, speciesName, icon = C_PetJournal.GetPetInfoByIndex(i);
     end
 end
 
