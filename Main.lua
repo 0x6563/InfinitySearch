@@ -52,7 +52,10 @@ end
 
 function addon:show(text)
     if InCombatLockdown() then return end
+    addon:populate()
     if addon.lockMovement == false then
+        InfinitySearchEditBox:SetText(text or " "); 
+        addon:filter();
         InfinitySearchDragBox:Show();
         InfinitySearchEditBox:Hide();
         InfinitySearchParent:Show();
@@ -61,7 +64,6 @@ function addon:show(text)
     
     InfinitySearchDragBox:Hide();
     InfinitySearchEditBox:Show();
-    addon:populate()    
     InfinitySearchEditBox:SetText(text or ""); 
     InfinitySearchParent:Show();
     UnregisterAttributeDriver(InfinitySearchParent, "state-visibility");
@@ -102,24 +104,12 @@ function addon:select(n)
     end
     ClearOverrideBindings(InfinitySearchOptions)
     SetOverrideBinding(InfinitySearchOptions, true, "enter", string.format("CLICK InfinitySearchOption%s:LeftButton",  addon.currentSelected));
-    addon:higlightRedraw()
-end
-
-function addon:higlightRedraw()
-    for i, o in ipairs(addon.options) do
-        if i == addon.currentSelected then
-            local opt = 'opt' .. i;
-            o.frame:SetBackdropColor(unpack(self.db.profile[opt].backdropColor));
-        else
-            o.frame:SetBackdropColor(0, 0, 0, 1)
-        end
-    end
+    addon:UpdateLayout()
 end
 
 function addon:filter()
     local c = 1
     local s = InfinitySearchEditBox:GetText()
-
     for i, o in ipairs(addon.options) do
         o.frame:Hide()
         o.object = nil
@@ -139,31 +129,9 @@ end
 
 function addon:updateOption(n, o)
     addon.options[n].object = o
-    addon.options[n].label:SetText(o.name)
+    addon.options[n].label:SetText( o.type .. ": " .. o.name)
     addon.options[n].icon:SetTexture(o.icon)
     addon.options[n].frame:Show()
     addon.options[n].frame:SetAttribute("macrotext", o.macro);
 end
 
-function addon:updateFlyout(direction)
-    addon.db.profile.direction = direction;
-    
-    InfinitySearchOptions:ClearAllPoints() 
-    if addon.db.profile.direction == "down" then
-        InfinitySearchOptions:SetPoint("TOP", InfinitySearchParent, "BOTTOM", 12)
-    else
-        InfinitySearchOptions:SetPoint("BOTTOM", InfinitySearchParent, "TOP", 12)
-    end
-    local parent = InfinitySearchParent
-    for i, o in ipairs(addon.options) do
-        if i > 1 then 
-            parent = addon.options[i - 1].frame 
-        end
-            o.frame:ClearAllPoints() 
-        if addon.db.profile.direction == "down" then
-            o.frame:SetPoint("TOP", parent, "BOTTOM", 12)
-        else
-            o.frame:SetPoint("BOTTOM", parent, "TOP", 12)
-        end
-    end
-end
