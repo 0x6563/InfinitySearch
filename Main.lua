@@ -3,8 +3,10 @@ local addon = InfinitySearch;
 addon.list = {};
 addon.searchable = {};
 addon.options = {};
+addon.lock = {
+    movement = true
+};
 addon.currentSelected = 1;
-addon.lockMovement = true;
 addon.defaults = {
     keybind = 'SHIFT-`',
     icon = "Interface\\Icons\\INV_Misc_EngGizmos_17",
@@ -26,14 +28,14 @@ _G['BINDING_NAME_CLICK InfinitySearchOption4:LeftButton'] = 'Select Option 4';
 _G['BINDING_NAME_CLICK InfinitySearchOption5:LeftButton'] = 'Select Option 5';
 
 function addon:OnInitialize()
-    addon:loadConfig();
+    addon:LoadConfig();
 end
 
 function addon:OnEnable()
-    addon:createFrames();  
+    addon:CreateFrames();  
 end
 
-function addon:setKeybind(key, cmd)
+function addon:SetKeybind(key, cmd)
     if(not key or key == "") then
         SetBinding(GetBindingKey(cmd));
     else
@@ -42,20 +44,20 @@ function addon:setKeybind(key, cmd)
     SaveBindings(GetCurrentBindingSet());
 end
 
-function addon:toggle()
+function addon:Toggle()
     if InfinitySearchParent:IsVisible() then
-        addon:close();
+        addon:Close();
     else
-        addon:show();
+        addon:Show();
     end
 end
 
-function addon:show(text)
+function addon:Show(text)
     if InCombatLockdown() then return end
-    addon:populate()
-    if addon.lockMovement == false then
+    addon:Populate()
+    if addon.lock.movement == false then
         InfinitySearchEditBox:SetText(text or " "); 
-        addon:filter();
+        addon:Filter();
         InfinitySearchDragBox:Show();
         InfinitySearchEditBox:Hide();
         InfinitySearchParent:Show();
@@ -71,25 +73,25 @@ function addon:show(text)
     InfinitySearchEditBox:SetFocus();
 
 end
-function addon:unfocus() InfinitySearchEditBox:ClearFocus(); end
+function addon:Unfocus() InfinitySearchEditBox:ClearFocus(); end
 
-function addon:close()
+function addon:Close()
     UnregisterAttributeDriver(InfinitySearchParent, "state-visibility");
     ClearOverrideBindings(InfinitySearchOptions);
     InfinitySearchParent:Hide()
 end
-function addon:tabCycle()
+function addon:TabCycle()
     if (IsShiftKeyDown())  then
-        addon:select(addon.currentSelected - 1) 
+        addon:Select(addon.currentSelected - 1) 
     else    
-        addon:select(addon.currentSelected + 1) 
+        addon:Select(addon.currentSelected + 1) 
     end
 end
-function addon:cycleSelect() 
-    addon:select(addon.currentSelected + 1) 
+function addon:CycleSelect() 
+    addon:Select(addon.currentSelected + 1) 
 end
 
-function addon:select(n)
+function addon:Select(n)
     local c = 0
     for i, o in ipairs(addon.options) do
         if o.frame:IsVisible() then c = c + 1 end
@@ -107,7 +109,7 @@ function addon:select(n)
     addon:UpdateLayout()
 end
 
-function addon:filter()
+function addon:Filter()
     local c = 1
     local s = InfinitySearchEditBox:GetText()
     for i, o in ipairs(addon.options) do
@@ -120,14 +122,14 @@ function addon:filter()
     local found = fzy.filter(s, addon.searchable)
     table.sort(found, function(a, b) return a[3] > b[3] end)
     for ii, f in ipairs(found) do
-        addon:updateOption(c, addon.list[f[1]])
+        addon:UpdateOption(c, addon.list[f[1]])
         c = c + 1
         if c > 5 then break end
     end
-    addon:select(1);
+    addon:Select(1);
 end
 
-function addon:updateOption(n, o)
+function addon:UpdateOption(n, o)
     addon.options[n].object = o
     addon.options[n].label:SetText( o.type .. ": " .. o.name)
     addon.options[n].icon:SetTexture(o.icon)

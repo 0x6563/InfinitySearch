@@ -1,7 +1,7 @@
 <Bindings>
 	<Binding name="INFINITYSEARCH_TOGGLE" description="Toggle Search Bar" runOnUp="true" category="Infinity Search">
 		if ( keystate == "up" ) then
-			InfinitySearch.toggle();
+			InfinitySearch.Toggle();
 		end
 	</Binding>
 	<Binding name="CLICK InfinitySearchOption1:LeftButton" runOnUp="true" category="Infinity Search"/>

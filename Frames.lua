@@ -1,7 +1,7 @@
 local addon = InfinitySearch;
 local Media = LibStub("LibSharedMedia-3.0");
 
-function addon:createFrames()
+function addon:CreateFrames()
     if not InfinitySearchParent then
         local f = CreateFrame("Frame", "InfinitySearchParent", UIParent, BackdropTemplateMixin and "BackdropTemplate")
         local cInset = 8;
@@ -21,7 +21,7 @@ function addon:createFrames()
         f:SetMovable(true)
         f:SetClampedToScreen(true)
         f:SetScript("OnMouseDown", function(self, button)
-            if addon.lockMovement == true then
+            if addon.lock.movement == true then
                 return;
             end
             if button == "LeftButton" 
@@ -29,7 +29,7 @@ function addon:createFrames()
             end
         end)
         f:SetScript("OnMouseUp", function(self, button)
-            if addon.lockMovement == true then
+            if addon.lock.movement == true then
                 return;
             end
             point, relativeTo, relativePoint, x, y = self:GetPoint();
@@ -50,10 +50,10 @@ function addon:createFrames()
         eb:SetMultiLine(false)
         eb:SetJustifyV("MIDDLE")
         eb:SetAutoFocus(false)
-        eb:SetScript("OnEscapePressed", function() addon:close() end);
-        eb:SetScript("OnTabPressed", function() addon:tabCycle() end);
-        eb:SetScript("OnEnterPressed", function() addon:unfocus() end);
-        eb:SetScript("OnTextChanged", function() addon:filter() end);
+        eb:SetScript("OnEscapePressed", function() addon:Close() end);
+        eb:SetScript("OnTabPressed", function() addon:TabCycle() end);
+        eb:SetScript("OnEnterPressed", function() addon:Unfocus() end);
+        eb:SetScript("OnTextChanged", function() addon:Filter() end);
         eb:SetScript("OnEditFocusGained", function() addon:UpdateLayout() end);
         eb:SetScript("OnEditFocusLost", function() addon:UpdateLayout() end);
 
@@ -71,16 +71,16 @@ function addon:createFrames()
         db:Hide();
 
         f:Show()
-        addon:createOptions()
+        addon:CreateOptions()
     end
-    addon:close()
+    addon:Close()
     
     if (GetBindingAction(addon.defaults.keybind) == '' and GetBindingKey('INFINITYSEARCH_TOGGLE') == nil) then
         SetBinding(addon.defaults.keybind, "INFINITYSEARCH_TOGGLE");
     end
 end
 
-function addon:createOptions()
+function addon:CreateOptions()
     local f = CreateFrame("Frame", "InfinitySearchOptions", InfinitySearchParent, BackdropTemplateMixin and "BackdropTemplate")
     local cInset = 8;
     if addon.db.profile.direction == "down" then
@@ -89,14 +89,14 @@ function addon:createOptions()
         f:SetPoint("BOTTOM", InfinitySearchParent, "TOP", 12)
     end
     f:Show()
-    addon:createOption(1)
-    addon:createOption(2)
-    addon:createOption(3)
-    addon:createOption(4)
-    addon:createOption(5)
+    addon:CreateOption(1)
+    addon:CreateOption(2)
+    addon:CreateOption(3)
+    addon:CreateOption(4)
+    addon:CreateOption(5)
 end
 
-function addon:createOption(n)
+function addon:CreateOption(n)
     local parent = InfinitySearchParent
     if n > 1 then 
         parent = addon.options[n - 1].frame 
@@ -113,7 +113,7 @@ function addon:createOption(n)
     f:SetBackdrop(addon.defaults.parentBackdrop)
     f:SetBackdropBorderColor(0, 0, 0, 0)
     f:SetAttribute("type", "macro");
-    f:SetScript("PostClick", function() addon:close() end)
+    f:SetScript("PostClick", function() addon:Close() end)
 
     local ff = f:CreateFontString("InfinitySearchOption" .. n .. "Name", "HIGH")
     ff:SetPoint("TOPLEFT", f, "TOPLEFT", 42, 0)

@@ -1,27 +1,27 @@
 local addon = InfinitySearch;
 
-function addon:populate()
+function addon:Populate()
     wipe(addon.list)
     wipe(addon.searchable)
     
     if (self.db.profile.collections.mounts) then
-        addon:populateMounts()
+        addon:PopulateMounts()
     end
     if (self.db.profile.collections.pets) then 
-        addon:populatePets()
+        addon:PopulatePets()
     end
     if (self.db.profile.collections.toys) then 
-        addon:populateToys()
+        addon:PopulateToys()
     end
     if (self.db.profile.collections.consumables) then 
-        addon:populateConsumables()
+        addon:PopulateConsumables()
     end
     if (self.db.profile.collections.spells) then 
-        addon:populateSpells()
+        addon:PopulateSpells()
     end
 end
 
-function addon:populateMounts()
+function addon:PopulateMounts()
     local mountIDs = C_MountJournal.GetMountIDs();
     for i, mountID in ipairs(mountIDs) do
         local name, spellID, icon, isActive, isUsable, sourceType, isFavorite,
@@ -41,7 +41,7 @@ function addon:populateMounts()
     end
 end
 
-function addon:populatePets()
+function addon:PopulatePets()
     C_PetJournal.ClearSearchFilter()
     C_PetJournal.SetAllPetSourcesChecked(true)
     C_PetJournal.SetAllPetTypesChecked(true)
@@ -67,7 +67,7 @@ function addon:populatePets()
     end
 end
 
-function addon:populateToys()
+function addon:PopulateToys()
     C_ToyBox.SetAllSourceTypeFilters(true)
     C_ToyBox.SetCollectedShown(true)
     C_ToyBox.SetUncollectedShown(false)
@@ -88,7 +88,7 @@ function addon:populateToys()
     end
 end
 
-function addon:populateConsumables()
+function addon:PopulateConsumables()
     local exists = {}
     for bag = 0, NUM_BAG_SLOTS do
         for slot = 1, GetContainerNumSlots(bag) do
@@ -113,7 +113,7 @@ function addon:populateConsumables()
     end
 end
 
-function addon:populateSpells()
+function addon:PopulateSpells()
     local tabs = GetNumSpellTabs()
     for t = 1, tabs do
         local tabName, texture, offset, numSpells = GetSpellTabInfo(t);
