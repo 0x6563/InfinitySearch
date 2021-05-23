@@ -6,7 +6,8 @@ addon.list = {};
 addon.searchable = {};
 addon.options = {};
 addon.lock = {
-    movement = true
+    editMode = false, 
+    close = false,
 };
 addon.currentSelected = 1;
 addon.defaults = {
@@ -40,7 +41,6 @@ end
 
 function addon:OnEnable()
     addon:CreateFrames();  
-    
 end
 
 function addon:SetKeybind(key, cmd)
@@ -62,12 +62,14 @@ end
 
 function addon:Show(text)
     if InCombatLockdown() then return end
-    addon:Populate()
-    if addon.lock.movement == false then
-        InfinitySearchEditBox:SetText(text or " "); 
-        addon:Filter();
+    addon:UpdateLayout();
+    addon:Populate();
+    
+    if addon.lock.editMode then
         InfinitySearchDragBox:Show();
         InfinitySearchEditBox:Hide();
+        InfinitySearchEditBox:SetText(text or " "); 
+        addon:Filter();
         InfinitySearchParent:Show();
         return;
     end
@@ -84,9 +86,14 @@ end
 function addon:Unfocus() InfinitySearchEditBox:ClearFocus(); end
 
 function addon:Close()
+    if addon.lock.close then
+        addon.lock.close = false;
+        return;
+    end    
     UnregisterAttributeDriver(InfinitySearchParent, "state-visibility");
     ClearOverrideBindings(InfinitySearchOptions);
-    InfinitySearchParent:Hide()
+    InfinitySearchParent:Hide();
+    addon.lock.editMode = false;
 end
 function addon:TabCycle()
     if (IsShiftKeyDown())  then
@@ -113,6 +120,7 @@ function addon:Select(n)
         addon.currentSelected = n
     end
     ClearOverrideBindings(InfinitySearchOptions)
+    SetOverrideBinding(InfinitySearchOptions, true, "escape", "INFINITYSEARCH_TOGGLE");
     SetOverrideBinding(InfinitySearchOptions, true, "enter", string.format("CLICK InfinitySearchOption%s:LeftButton",  addon.currentSelected));
     addon:UpdateLayout()
 end
@@ -137,11 +145,29 @@ function addon:Filter()
     addon:Select(1);
 end
 
+function addon:ToggleEditMode() 
+    addon.lock.editMode = not addon.lock.editMode;
+    if addon.lock.editMode then
+        addon:Show();
+    else
+        addon:Close();
+    end
+end
+
 function addon:UpdateOption(n, o)
-    addon.options[n].object = o
-    addon.options[n].label:SetText( o.type .. ": " .. o.name)
-    addon.options[n].icon:SetTexture(o.icon)
-    addon.options[n].frame:Show()
-    addon.options[n].frame:SetAttribute("macrotext", o.macro);
+    addon.options[n].object = o;
+    addon.options[n].label:SetText( o.type .. ": " .. o.name);
+    addon.options[n].icon:SetTexture(o.icon);
+    local frame = addon.options[n].frame;
+    frame:Show();
+    frame:SetAttribute("type", nil);
+    frame:SetAttribute("macrotext",  nil);
+    if o.execute == 'macro' then
+        frame:SetAttribute("type", "macro");
+        frame:SetAttribute("macrotext", o.command);
+    elseif o.execute == 'function' then
+        frame:SetAttribute("type", "run");
+        frame:SetAttribute("_run", o.command);
+    end
 end
 

@@ -21,7 +21,7 @@ function addon:CreateFrames()
         f:SetMovable(true)
         f:SetClampedToScreen(true)
         f:SetScript("OnMouseDown", function(self, button)
-            if addon.lock.movement == true then
+            if not addon.lock.editMode then
                 return;
             end
             if button == "LeftButton" 
@@ -29,7 +29,7 @@ function addon:CreateFrames()
             end
         end)
         f:SetScript("OnMouseUp", function(self, button)
-            if addon.lock.movement == true then
+            if not addon.lock.editMode then
                 return;
             end
             point, relativeTo, relativePoint, x, y = self:GetPoint();
@@ -108,7 +108,6 @@ function addon:CreateOption(n)
     f:SetSize(400, 40)
     f:SetBackdrop(addon.defaults.parentBackdrop)
     f:SetBackdropBorderColor(0, 0, 0, 0)
-    f:SetAttribute("type", "macro");
     f:SetScript("PostClick", function() addon:Close() end)
 
     local ff = f:CreateFontString("InfinitySearchOption" .. n .. "Name", "HIGH")
@@ -131,7 +130,6 @@ end
 
 function addon:UpdateLayout()
     InfinitySearchOptions:ClearAllPoints() 
-    
     InfinitySearchEditBox:SetFont(Media:Fetch('font', self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize)
     if addon.db.profile.direction == "down" then
         InfinitySearchOptions:SetPoint("TOP", InfinitySearchParent, "BOTTOM", 12)
