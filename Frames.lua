@@ -74,10 +74,6 @@ function addon:CreateFrames()
         addon:CreateOptions()
     end
     addon:Close()
-    
-    if (GetBindingAction(addon.defaults.keybind) == '' and GetBindingKey('INFINITYSEARCH_TOGGLE') == nil) then
-        SetBinding(addon.defaults.keybind, "INFINITYSEARCH_TOGGLE");
-    end
 end
 
 function addon:CreateOptions()

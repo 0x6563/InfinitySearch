@@ -1,4 +1,6 @@
 InfinitySearch = LibStub("AceAddon-3.0"):NewAddon("InfinitySearch");
+local AceEvent = LibStub("AceEvent-3.0");
+
 local addon = InfinitySearch;
 addon.list = {};
 addon.searchable = {};
@@ -29,10 +31,16 @@ _G['BINDING_NAME_CLICK InfinitySearchOption5:LeftButton'] = 'Select Option 5';
 
 function addon:OnInitialize()
     addon:LoadConfig();
+    AceEvent:RegisterEvent('VARIABLES_LOADED', function()
+        if (GetBindingAction(addon.defaults.keybind) == '' and GetBindingKey('INFINITYSEARCH_TOGGLE') == nil) then
+            addon:SetKeybind(addon.defaults.keybind, "INFINITYSEARCH_TOGGLE")
+        end 
+    end);
 end
 
 function addon:OnEnable()
     addon:CreateFrames();  
+    
 end
 
 function addon:SetKeybind(key, cmd)
