@@ -4,6 +4,7 @@ local Media = LibStub("LibSharedMedia-3.0");
 function addon:CreateFrames()
     if not InfinitySearchParent then
         local f = CreateFrame("Frame", "InfinitySearchParent", UIParent, BackdropTemplateMixin and "BackdropTemplate")
+        f:SetFrameStrata("TOOLTIP");
         local cInset = 8;
         f:SetPoint("CENTER")
         if self.db.profile.position then
@@ -64,7 +65,7 @@ function addon:CreateFrames()
         db:SetPoint("BOTTOM", 0)
         
         local ff = db:CreateFontString("InfinitySearchDragBoxText", "HIGH")
-        ff:SetFont(Media:Fetch('font', self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize)
+        ff:SetFont(Media:Fetch("font", self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize)
         ff:SetPoint("TOPLEFT", f, "TOPLEFT", 42, 0)
         ff:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 42, 0)
         ff:SetText("Drag Me")
@@ -130,7 +131,7 @@ end
 
 function addon:UpdateLayout()
     InfinitySearchOptions:ClearAllPoints() 
-    InfinitySearchEditBox:SetFont(Media:Fetch('font', self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize)
+    InfinitySearchEditBox:SetFont(Media:Fetch("font", self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize)
     if addon.db.profile.direction == "down" then
         InfinitySearchOptions:SetPoint("TOP", InfinitySearchParent, "BOTTOM", 12)
     else
@@ -141,7 +142,7 @@ function addon:UpdateLayout()
         InfinitySearchEditBox:SetTextColor(unpack(self.db.profile.searchbar.fontColorHighlight))
         InfinitySearchParent:SetBackdropColor(unpack(self.db.profile.searchbar.backdropColorHighlight));
     else
-        InfinitySearchDragBoxText:SetFont(Media:Fetch('font', self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize)
+        InfinitySearchDragBoxText:SetFont(Media:Fetch("font", self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize)
 
         InfinitySearchEditBox:SetTextColor(unpack(self.db.profile.searchbar.fontColor))
         InfinitySearchParent:SetBackdropColor(unpack(self.db.profile.searchbar.backdropColor))
@@ -149,13 +150,13 @@ function addon:UpdateLayout()
 
     local parent = InfinitySearchParent
     for i, o in ipairs(addon.options) do
-        local opt = 'opt' .. i;
+        local opt = "opt" .. i;
 
         if i > 1 then 
             parent = addon.options[i - 1].frame 
         end
       
-        o.label:SetFont(Media:Fetch('font', self.db.profile[opt].font), self.db.profile[opt].fontSize)
+        o.label:SetFont(Media:Fetch("font", self.db.profile[opt].font), self.db.profile[opt].fontSize)
         o.frame:ClearAllPoints();
         if addon.db.profile.direction == "down" then
             o.frame:SetPoint("TOP", parent, "BOTTOM", 12)

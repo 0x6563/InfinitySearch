@@ -11,7 +11,7 @@ addon.lock = {
 };
 addon.currentSelected = 1;
 addon.defaults = {
-    keybind = 'SHIFT-`',
+    keybind = "SHIFT-`",
     icon = "Interface\\Icons\\INV_Misc_EngGizmos_17",
     parentBackdrop = {
         bgFile = "Interface/Tooltips/UI-Tooltip-Background",
@@ -23,17 +23,17 @@ addon.defaults = {
     }
 };
 
-_G['BINDING_NAME_INFINITYSEARCH_TOGGLE'] = 'Open Infinity Search';
-_G['BINDING_NAME_CLICK InfinitySearchOption1:LeftButton'] = 'Select Option 1';
-_G['BINDING_NAME_CLICK InfinitySearchOption2:LeftButton'] = 'Select Option 2';
-_G['BINDING_NAME_CLICK InfinitySearchOption3:LeftButton'] = 'Select Option 3';
-_G['BINDING_NAME_CLICK InfinitySearchOption4:LeftButton'] = 'Select Option 4';
-_G['BINDING_NAME_CLICK InfinitySearchOption5:LeftButton'] = 'Select Option 5';
+_G["BINDING_NAME_INFINITYSEARCH_TOGGLE"] = "Open Infinity Search";
+_G["BINDING_NAME_CLICK InfinitySearchOption1:LeftButton"] = "Select Option 1";
+_G["BINDING_NAME_CLICK InfinitySearchOption2:LeftButton"] = "Select Option 2";
+_G["BINDING_NAME_CLICK InfinitySearchOption3:LeftButton"] = "Select Option 3";
+_G["BINDING_NAME_CLICK InfinitySearchOption4:LeftButton"] = "Select Option 4";
+_G["BINDING_NAME_CLICK InfinitySearchOption5:LeftButton"] = "Select Option 5";
 
 function addon:OnInitialize()
     addon:LoadConfig();
-    AceEvent:RegisterEvent('VARIABLES_LOADED', function()
-        if (GetBindingAction(addon.defaults.keybind) == '' and GetBindingKey('INFINITYSEARCH_TOGGLE') == nil) then
+    AceEvent:RegisterEvent("VARIABLES_LOADED", function()
+        if (GetBindingAction(addon.defaults.keybind) == "" and GetBindingKey("INFINITYSEARCH_TOGGLE") == nil) then
             addon:SetKeybind(addon.defaults.keybind, "INFINITYSEARCH_TOGGLE")
         end 
     end);
@@ -132,7 +132,7 @@ function addon:Filter()
         o.frame:Hide()
         o.object = nil
     end
-    if (s == '' or s == nil) then
+    if (s == "" or s == nil) then
         return
     end
     local found = fzy.filter(s, addon.searchable)
@@ -156,16 +156,21 @@ end
 
 function addon:UpdateOption(n, o)
     addon.options[n].object = o;
-    addon.options[n].label:SetText( o.type .. ": " .. o.name);
+    addon.options[n].label:SetText(o.search);
     addon.options[n].icon:SetTexture(o.icon);
     local frame = addon.options[n].frame;
     frame:Show();
     frame:SetAttribute("type", nil);
     frame:SetAttribute("macrotext",  nil);
-    if o.execute == 'macro' then
+    frame:SetAttribute("macro",  nil);
+    frame:SetAttribute("_run",  nil);
+    if o.execute == "macrotext" then
         frame:SetAttribute("type", "macro");
         frame:SetAttribute("macrotext", o.command);
-    elseif o.execute == 'function' then
+    elseif o.execute == "macro" then
+        frame:SetAttribute("type", "macro");
+        frame:SetAttribute("macro", o.command);
+    elseif o.execute == "function" then
         frame:SetAttribute("type", "run");
         frame:SetAttribute("_run", o.command);
     end

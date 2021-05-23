@@ -6,31 +6,34 @@ function addon:Populate()
     wipe(addon.list)
     wipe(addon.searchable)
     
-    if addon:CollectionEnabled('mounts') then
-        Collections.AddMounts()
+    if addon:CollectionEnabled("mounts") then
+        Collections.LoadMounts();
     end
-    if addon:CollectionEnabled('pets') then 
-        Collections.AddPets()
+    if addon:CollectionEnabled("pets") then 
+        Collections.LoadPets();
     end
-    if addon:CollectionEnabled('toys') then 
-        Collections.AddToys()
+    if addon:CollectionEnabled("toys") then 
+        Collections.LoadToys();
     end
-    if addon:CollectionEnabled('consumables') then 
-        Collections.AddConsumables()
+    if addon:CollectionEnabled("consumables") then 
+        Collections.LoadConsumables();
     end
-    if addon:CollectionEnabled('spells') then 
-        Collections.AddSpells()
+    if addon:CollectionEnabled("characterMacros") then 
+        Collections.LoadCharacterMacros();
     end
-    if addon:CollectionEnabled('infinitySearch') then 
-        Collections.AddAddonInfinitySearch();
+    if addon:CollectionEnabled("accountMacros") then 
+        Collections.LoadAccountMacros();
     end
-    if addon:CollectionEnabled('ui') then 
-        Collections.AddUIPanels();
+    if addon:CollectionEnabled("spells") then 
+        Collections.LoadSpells();
+    end
+    if addon:CollectionEnabled("ui") then 
+        Collections.LoadUIPanels();
     end
 
     for key, val in pairs(ThirdPartyCommands) do
-        if addon:CollectionEnabled('addon:'..key) then 
-            Collections.AddAddon(key);
+        if addon:CollectionEnabled("addon:"..key) then 
+            Collections.LoadAddon(key);
         end
     end
 end
@@ -40,7 +43,7 @@ function addon:RegisterAddonMacrotext(addon, name, icon, command)
         addon = addon,
         name = name,
         icon = icon, 
-        execute = 'macro',
+        execute = "macrotext",
         command = command
     });
 end
@@ -49,7 +52,7 @@ function addon:RegisterAddonFunction(addon, name, icon, command)
         addon = addon,
         name = name,
         icon = icon, 
-        execute = 'function',
+        execute = "function",
         command = command
     });
 end
@@ -59,7 +62,7 @@ function addon:UnregisterAddonCommand(addon, name)
 end
 
 function addon:CollectionEnabled(collection)
-    if type(self.db.profile.collections[collection]) ~= 'boolean' then
+    if type(self.db.profile.collections[collection]) ~= "boolean" then
         self.db.profile.collections[collection] = true;
         addon:RefreshCollectionsConfig();
     end
@@ -68,7 +71,7 @@ end
 
 function Collections.RegisterThirdparty(cmd)
     ThirdPartyCommands[cmd.addon] = ThirdPartyCommands[cmd.addon] or {};
-    addon:CollectionEnabled('addon:'..cmd.addon);
+    addon:CollectionEnabled("addon:" .. cmd.addon);
     ThirdPartyCommands[cmd.addon][cmd.name] = cmd;
 end
 
@@ -76,72 +79,62 @@ function Collections.UnregisterAddonCommand(addon, name)
     ThirdPartyCommands[addon][name] = nil;
 end
 
-function Collections.Add(cmd)
-    cmd.icon = cmd.icon or addon.defaults.icon,
-    table.insert(addon.list, cmd)
-    table.insert(addon.searchable, cmd.type .. ": " .. cmd.name)
-end
-
-function Collections.AddMacro(type, name, icon, command)
-    local m = {
-        execute = "macro",
-        icon = icon,
+function Collections.Load(execute, type, name, icon, command)
+    local o = {
+        execute = execute,
+        icon = icon or addon.defaults.icon,
         name = name,
         type = type,
         command = command
     }
-    Collections.Add(m);
-end
-function Collections.AddFunction(type, name, icon, command)
-    local cmd = {
-        execute = 'function',
-        name = name,
-        icon = icon,
-        type = type,
-        command = command
-    };
-    Collections.Add(cmd);
+    Collections.SetSearch(o);
+    table.insert(addon.list, o)
+    table.insert(addon.searchable, o.search);
 end
 
-function Collections.AddAddon(addon)
-    for key, val in pairs(ThirdPartyCommands[addon]) do
-        if val.execute == 'macro' then
-            Collections.AddMacro('Addon', val.name, val.icon, val.command)
-        elseif val.execute == 'function' then
-            Collections.AddFunction('Addon', val.name, val.icon, val.command)
-        end
+function Collections.SetSearch(cmd)
+    if cmd.type == "Addon" then
+        cmd.search = cmd.name;
+    else
+        cmd.search = cmd.type ..": ".. cmd.name;
     end
 end
 
-function Collections.AddMounts()
+function Collections.LoadAddon(addon)
+    for key, val in pairs(ThirdPartyCommands[addon]) do
+        Collections.Load(val.execute, "Addon", addon ..": ".. val.name, val.icon, val.command)
+    end
+end
+
+function Collections.LoadMounts()
     local mountIDs = C_MountJournal.GetMountIDs();
     for i, mountID in ipairs(mountIDs) do
         local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(mountID);
         if isCollected and isUsable then
-            Collections.AddMacro("Mount", name, icon, string.format("%s %s", SLASH_USE1, name))
+            Collections.Load("macrotext", "Mount", name, icon, SLASH_USE1 .." ".. name)
         end
     end
 end
 
-function Collections.AddPets()
+function Collections.LoadPets()
     C_PetJournal.ClearSearchFilter()
     C_PetJournal.SetAllPetSourcesChecked(true)
     C_PetJournal.SetAllPetTypesChecked(true)
     local exists = {}
     local i = 1;
-    local petID, speciesID, owned, customName, level, favorite, isRevoked, speciesName, icon = C_PetJournal.GetPetInfoByIndex(i);
+    local petID, speciesID, owned, customName, level, favorite, isRevoked, name, icon = C_PetJournal.GetPetInfoByIndex(i);
     while (petID)
     do
-        if owned and exists[speciesName] == nil then
-            Collections.AddMacro("Pet", speciesName, icon, string.format("%s %s", '/summonpet', speciesName))
-            exists[speciesName] = true;
+        if owned and exists[name] == nil then
+            Collections.Load("macrotext", "Pet", name, icon, "/summonpet " .. name)
+            exists[name] = true;
         end
         i = i + 1;
-        petID, speciesID, owned, customName, level, favorite, isRevoked, speciesName, icon = C_PetJournal.GetPetInfoByIndex(i);
+        petID, speciesID, owned, customName, level, favorite, isRevoked, name, icon = C_PetJournal.GetPetInfoByIndex(i);
     end
 end
 
-function Collections.AddToys()
+function Collections.LoadToys()
     C_ToyBox.SetAllSourceTypeFilters(true)
     C_ToyBox.SetCollectedShown(true)
     C_ToyBox.SetUncollectedShown(false)
@@ -149,20 +142,20 @@ function Collections.AddToys()
     for i = 1, C_ToyBox.GetNumFilteredToys() do
         local id, name, icon, isFavorite, hasFanfare = C_ToyBox.GetToyInfo(C_ToyBox.GetToyFromIndex(i));
         if name and C_ToyBox.IsToyUsable(id) then
-            Collections.AddMacro("Toy", name, icon, string.format("%s %s", SLASH_USE_TOY1, name));
+            Collections.Load("macrotext", "Toy", name, icon, SLASH_USE_TOY1 .. " " .. name);
         end
     end
 end
 
-function Collections.AddConsumables()
+function Collections.LoadConsumables()
     local exists = {}
     for bag = 0, NUM_BAG_SLOTS do
         for slot = 1, GetContainerNumSlots(bag) do
             id = GetContainerItemID(bag, slot)
             if id ~= nil and exists[id] == nil then
                 local name, link, rarity, level, minLevel, type, subtype, stackCount, equipLocation, icon = GetItemInfo(id);
-                if type == 'Consumable' then
-                    Collections.AddMacro("Item", name, icon, string.format("%s %s", SLASH_USE1, name));
+                if type == "Consumable" then
+                    Collections.Load("macrotext", "Item", name, icon, SLASH_USE1 .. " " .. name);
                 end
                 exists[id] = true;
             end
@@ -170,7 +163,7 @@ function Collections.AddConsumables()
     end
 end
 
-function Collections.AddSpells()
+function Collections.LoadSpells()
     local tabs = GetNumSpellTabs()
     for t = 1, tabs do
         local tabName, texture, offset, numSpells = GetSpellTabInfo(t);
@@ -181,49 +174,49 @@ function Collections.AddSpells()
             local isPassive = IsPassiveSpell(i, BOOKTYPE_SPELL)
             local isUsable, _ = IsUsableSpell(i, BOOKTYPE_SPELL)
             if (rank and name and isUsable and not isPassive and type ~= "FUTURESPELL") then
-                Collections.AddMacro("Spell", name, icon, string.format("%s %s", SLASH_CAST1, name));
+                Collections.Load("macrotext", "Spell", name, icon, SLASH_CAST1 .. " " .. name);
             end
         end
     end
 end
 
-function Collections.AddAddonInfinitySearch()
-    Collections.AddFunction("Addon", "InfinitySearch Drag Mode", nil,
-        function()
-            addon.lock.close = true;
-            addon:ToggleEditMode();
+function Collections.LoadCharacterMacros()
+    local numMacros = select(2, GetNumMacros());
+    for id = 121, 120 + numMacros do
+        local name, icon, body, isLocal = GetMacroInfo(id);
+        if name then
+            Collections.Load("macro", "Macro", name, icon, id);
         end
-    );
-    Collections.AddFunction("Addon", "InfinitySearch Toggle Flyout", nil,
-        function()
-            addon.lock.close = true;
-            if addon.db.profile.direction == 'up' then
-                addon.db.profile.direction = 'down';
-            else
-                addon.db.profile.direction = 'up'
-            end
-            addon:UpdateLayout();
-        end
-    );
+    end
 end
 
-function Collections.AddUIPanels()
-    Collections.AddFunction("UI", "Open Character Tab", nil, function() ToggleCharacter("PaperDollFrame"); end);
-    Collections.AddFunction("UI", "Open Pet Tab", nil, function() ToggleCharacter("PetPaperDollFrame"); end);
-    Collections.AddFunction("UI", "Open Reputation Tab", nil, function() ToggleCharacter("ReputationFrame"); end);
-    Collections.AddFunction("UI", "Open Currency Tab", nil, function() ToggleCharacter("TokenFrame"); end);
-    Collections.AddFunction("UI", "Open Adventure Guide", nil, function()  ToggleEncounterJournal(); end);
-    Collections.AddFunction("UI", "Open Talents", nil, function() ToggleTalentFrame(); end);
-    Collections.AddFunction("UI", "Open Achievements", nil, function()  ToggleAchievementFrame(); end);
-    Collections.AddFunction("UI", "Open Dungeon Finder",  nil, function() PVEFrame_ToggleFrame("GroupFinderFrame", LFDParentFrame) end);
-    Collections.AddFunction("UI", "Open Raid Finder",  nil, function() PVEFrame_ToggleFrame("GroupFinderFrame", RaidFinderFrame) end);
-    Collections.AddFunction("UI", "Open Premade Groups window",  nil, function() PVEFrame_ToggleFrame("GroupFinderFrame", LFGListPVEStub) end);
-    Collections.AddFunction("UI", "Open PVP window",  nil, function() TogglePVPUI() end);
-    Collections.AddFunction("UI", "Open Mounts Journal",  nil, function() ToggleCollectionsJournal(1) end);
-    Collections.AddFunction("UI", "Open Pet Journal",  nil, function() ToggleCollectionsJournal(2) end);
-    Collections.AddFunction("UI", "Open Toybox Journal",  nil, function() ToggleCollectionsJournal(3) end);
-    Collections.AddFunction("UI", "Open Heirlooms Journal",  nil, function() ToggleCollectionsJournal(4) end);
-    Collections.AddFunction("UI", "Open Appearances Journal",  nil, function() ToggleCollectionsJournal(5) end);
-    Collections.AddFunction("UI", "Open Weekly Rewards",  nil, function() WeeklyRewards_ShowUI() end);
+function Collections.LoadAccountMacros()
+    local numMacros = select(1, GetNumMacros());
+    for id = 1, numMacros do
+        local name, icon, body, isLocal = GetMacroInfo(id);
+        if name then
+            Collections.Load("macro", "Macro", name, icon, id);
+        end
+    end
+end
+
+function Collections.LoadUIPanels()
+    Collections.Load("function", "UI", "Open Character Tab", nil, function() ToggleCharacter("PaperDollFrame"); end);
+    Collections.Load("function", "UI", "Open Pet Tab", nil, function() ToggleCharacter("PetPaperDollFrame"); end);
+    Collections.Load("function", "UI", "Open Reputation Tab", nil, function() ToggleCharacter("ReputationFrame"); end);
+    Collections.Load("function", "UI", "Open Currency Tab", nil, function() ToggleCharacter("TokenFrame"); end);
+    Collections.Load("function", "UI", "Open Adventure Guide", nil, function()  ToggleEncounterJournal(); end);
+    Collections.Load("function", "UI", "Open Talents", nil, function() ToggleTalentFrame(); end);
+    Collections.Load("function", "UI", "Open Achievements", nil, function()  ToggleAchievementFrame(); end);
+    Collections.Load("function", "UI", "Open Dungeon Finder",  nil, function() PVEFrame_ToggleFrame("GroupFinderFrame", LFDParentFrame) end);
+    Collections.Load("function", "UI", "Open Raid Finder",  nil, function() PVEFrame_ToggleFrame("GroupFinderFrame", RaidFinderFrame) end);
+    Collections.Load("function", "UI", "Open Premade Groups window",  nil, function() PVEFrame_ToggleFrame("GroupFinderFrame", LFGListPVEStub) end);
+    Collections.Load("function", "UI", "Open PVP window",  nil, function() TogglePVPUI() end);
+    Collections.Load("function", "UI", "Open Mounts Journal",  nil, function() ToggleCollectionsJournal(1) end);
+    Collections.Load("function", "UI", "Open Pet Journal",  nil, function() ToggleCollectionsJournal(2) end);
+    Collections.Load("function", "UI", "Open Toybox Journal",  nil, function() ToggleCollectionsJournal(3) end);
+    Collections.Load("function", "UI", "Open Heirlooms Journal",  nil, function() ToggleCollectionsJournal(4) end);
+    Collections.Load("function", "UI", "Open Appearances Journal",  nil, function() ToggleCollectionsJournal(5) end);
+    Collections.Load("function", "UI", "Open Weekly Rewards",  nil, function() WeeklyRewards_ShowUI() end);
 end
 
