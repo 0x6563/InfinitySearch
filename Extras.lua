@@ -1,27 +1,27 @@
 -- This files serves as an example of how to integrate into InfinitySearch
 -- If you would like your addon to not be included or would prefer to register your own commands;
--- Please open a pull request and replace our snippets with a single comment;
+-- Please open a pull request at https://github.com/0x6563/InfinitySearch/pulls and replace code with a single comment;
 -- -- Do not include NameOfMyAddon
 
 -- There are two methods for registering and one for unregistering commands
--- InfinitySearch:RegisterAddonMacrotext(addon, name, icon, command)
+-- InfinitySearch:RegisterAddonMacrotext(addon, command, icon, action)
 --   arguments
---     addon:   string      - The name of your addon. This is prepended to the search text and used to enable/disable it in the collections config.
---     name:    string      - The name of the command
---     icon:    string      - The icon for your command
---     command: string      - The slash command to run
+--     addon:       string      - The name of your addon
+--     command:     string      - The name of the command
+--     icon:        string      - The icon for your command
+--     action:      string      - The slash command to run
 
--- InfinitySearch:RegisterAddonFunction(addon, name, icon, command)
+-- InfinitySearch:RegisterAddonFunction(addon, command, icon, action)
 --   arguments
---     addon:   string      - The name of your addon. This is prepended to the search text and used to enable/disable it in the collections screen.
---     name:    string      - The name of the command
---     icon:    string      - The icon for your command
---     command: function    - The slash command to run
+--     addon:       string      - The name of your addon
+--     command:     string      - The name of the command
+--     icon:        string      - The icon for your command
+--     action:      function    - The function to run
 
--- InfinitySearch:UnregisterAddonCommand(addon, name)
+-- InfinitySearch:UnregisterAddonCommand(addon, command)
 --   arguments
---     addon:   string      - The name of your addon
---     name:    string      - The name of the command
+--     addon:       string      - The name of your addon
+--     command:     string      - The name of the command
 
 
 local Loaded = CreateFrame("FRAME");

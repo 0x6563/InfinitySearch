@@ -1,6 +1,6 @@
-##Interface: 90001
-##Title: InfinitySearch
-##Notes: InfinitySearch
+## Interface: 90005
+## Title: InfinitySearch
+## Notes: InfinitySearch
 ## SavedVariables: InfinitySearchDB
 
 embeds.xml

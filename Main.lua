@@ -166,13 +166,13 @@ function addon:UpdateOption(n, o)
     frame:SetAttribute("_run",  nil);
     if o.execute == "macrotext" then
         frame:SetAttribute("type", "macro");
-        frame:SetAttribute("macrotext", o.command);
+        frame:SetAttribute("macrotext", o.action);
     elseif o.execute == "macro" then
         frame:SetAttribute("type", "macro");
-        frame:SetAttribute("macro", o.command);
+        frame:SetAttribute("macro", o.action);
     elseif o.execute == "function" then
-        frame:SetAttribute("type", "run");
-        frame:SetAttribute("_run", o.command);
+        frame:SetAttribute("type", "function");
+        frame:SetAttribute("_function", o.action);
     end
 end
 

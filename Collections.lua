@@ -38,27 +38,27 @@ function addon:Populate()
     end
 end
 
-function addon:RegisterAddonMacrotext(addon, name, icon, command)
+function addon:RegisterAddonMacrotext(addon, command, icon, action)
    Collections.RegisterThirdparty({
         addon = addon,
-        name = name,
+        command = command,
         icon = icon, 
         execute = "macrotext",
-        command = command
+        action = action
     });
 end
-function addon:RegisterAddonFunction(addon, name, icon, command)
+function addon:RegisterAddonFunction(addon, command, icon, action)
    Collections.RegisterThirdparty({
         addon = addon,
-        name = name,
+        command = command,
         icon = icon, 
         execute = "function",
-        command = command
+        action = action
     });
 end
 
-function addon:UnregisterAddonCommand(addon, name)
-    Collections.UnregisterAddonCommand(addon, name);
+function addon:UnregisterAddonCommand(addon, command)
+    Collections.UnregisterAddonCommand(addon, command);
 end
 
 function addon:CollectionEnabled(collection)
@@ -72,20 +72,20 @@ end
 function Collections.RegisterThirdparty(cmd)
     ThirdPartyCommands[cmd.addon] = ThirdPartyCommands[cmd.addon] or {};
     addon:CollectionEnabled("addon:" .. cmd.addon);
-    ThirdPartyCommands[cmd.addon][cmd.name] = cmd;
+    ThirdPartyCommands[cmd.addon][cmd.command] = cmd;
 end
 
-function Collections.UnregisterAddonCommand(addon, name)
-    ThirdPartyCommands[addon][name] = nil;
+function Collections.UnregisterAddonCommand(addon, command)
+    ThirdPartyCommands[addon][command] = nil;
 end
 
-function Collections.Load(execute, type, name, icon, command)
+function Collections.Load(execute, type, command, icon, action)
     local o = {
         execute = execute,
         icon = icon or addon.defaults.icon,
-        name = name,
+        command = command,
         type = type,
-        command = command
+        action = action
     }
     Collections.SetSearch(o);
     table.insert(addon.list, o)
@@ -94,15 +94,15 @@ end
 
 function Collections.SetSearch(cmd)
     if cmd.type == "Addon" then
-        cmd.search = cmd.name;
+        cmd.search = cmd.command;
     else
-        cmd.search = cmd.type ..": ".. cmd.name;
+        cmd.search = cmd.type ..": ".. cmd.command;
     end
 end
 
 function Collections.LoadAddon(addon)
     for key, val in pairs(ThirdPartyCommands[addon]) do
-        Collections.Load(val.execute, "Addon", addon ..": ".. val.name, val.icon, val.command)
+        Collections.Load(val.execute, "Addon", addon ..": ".. val.command, val.icon, val.action)
     end
 end
 
