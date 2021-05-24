@@ -4,7 +4,7 @@
 Originally, InfinitySearch was about quickly accessing and using toys, mounts, and pets. That lasted about a week. It now allows opening UI panels, executing addon commands, casting spells, and macros.
 
 ## Usage
-- Set a keybind to **Toggle InfinitySearch** defaults to SHIFT-`
+- Set a keybind to **Toggle InfinitySearch**
 - Hit said keybind
 - Start typing
 - Press Tab to cycle through options
