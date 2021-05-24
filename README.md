@@ -49,6 +49,6 @@ There are two APIs for registering and one for unregistering. Registered command
 ```
 InfinitySearch:RegisterAddonFunction("Extras: InfinitySearch", "Options", nil, function() InfinitySearch:ShowConfig(); end);
 InfinitySearch:RegisterAddonMacrotext("Extras: Bartender4", "Options", nil, "/bt4");
-InfinitySearch:UnregisterAddonCommand("Extras: Bartender4");
+InfinitySearch:UnregisterAddonCommand("Extras: Bartender4", "Options");
 
 ```
