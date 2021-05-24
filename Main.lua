@@ -32,9 +32,10 @@ _G["BINDING_NAME_CLICK InfinitySearchOption5:LeftButton"] = "Select Option 5";
 
 function addon:OnInitialize()
     addon:LoadConfig();
-    AceEvent:RegisterEvent("VARIABLES_LOADED", function()
+    AceEvent:RegisterEvent("PLAYER_LOGIN", function(_, e)
         if (GetBindingAction(addon.defaults.keybind) == "" and GetBindingKey("INFINITYSEARCH_TOGGLE") == nil) then
-            addon:SetKeybind(addon.defaults.keybind, "INFINITYSEARCH_TOGGLE")
+            addon.lock.editMode = true;
+            addon:Show();
         end 
     end);
 end
@@ -44,7 +45,7 @@ function addon:OnEnable()
 end
 
 function addon:SetKeybind(key, cmd)
-    if(not key or key == "") then
+    if((not key or key == "") and GetBindingKey(cmd)) then
         SetBinding(GetBindingKey(cmd));
     else
         SetBinding(key, cmd);
@@ -63,9 +64,9 @@ end
 function addon:Show(text)
     if InCombatLockdown() then return end
     addon:UpdateLayout();
-    addon:Populate();
     
     if addon.lock.editMode then
+        addon:PopulateEditMode();
         InfinitySearchDragBox:Show();
         InfinitySearchEditBox:Hide();
         InfinitySearchEditBox:SetText(text or " "); 
@@ -74,6 +75,7 @@ function addon:Show(text)
         return;
     end
     
+    addon:Populate();
     InfinitySearchDragBox:Hide();
     InfinitySearchEditBox:Show();
     InfinitySearchEditBox:SetText(text or ""); 
@@ -119,10 +121,10 @@ function addon:Select(n)
     else
         addon.currentSelected = n
     end
-    ClearOverrideBindings(InfinitySearchOptions)
+    ClearOverrideBindings(InfinitySearchOptions);
     SetOverrideBinding(InfinitySearchOptions, true, "escape", "INFINITYSEARCH_TOGGLE");
     SetOverrideBinding(InfinitySearchOptions, true, "enter", string.format("CLICK InfinitySearchOption%s:LeftButton",  addon.currentSelected));
-    addon:UpdateLayout()
+    addon:UpdateLayout();
 end
 
 function addon:Filter()
@@ -164,13 +166,13 @@ function addon:UpdateOption(n, o)
     frame:SetAttribute("macrotext",  nil);
     frame:SetAttribute("macro",  nil);
     frame:SetAttribute("_run",  nil);
-    if o.execute == "macrotext" then
+    if o.runAs == "macrotext" then
         frame:SetAttribute("type", "macro");
         frame:SetAttribute("macrotext", o.action);
-    elseif o.execute == "macro" then
+    elseif o.runAs == "macro" then
         frame:SetAttribute("type", "macro");
         frame:SetAttribute("macro", o.action);
-    elseif o.execute == "function" then
+    elseif o.runAs == "function" then
         frame:SetAttribute("type", "function");
         frame:SetAttribute("_function", o.action);
     end

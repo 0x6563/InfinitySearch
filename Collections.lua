@@ -1,3 +1,4 @@
+local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local addon = InfinitySearch;
 local Collections = {};
 local ThirdPartyCommands = {};
@@ -38,12 +39,43 @@ function addon:Populate()
     end
 end
 
+function addon:PopulateEditMode()
+    wipe(addon.list);
+    wipe(addon.searchable);
+    
+    Collections.Load("function", "Addon", "InfinitySearch: Open Options", nil, function() 
+        InfinitySearch.lock.close = true;
+        AceConfigDialog:Open("InfinitySearch");
+    end); 
+    Collections.Load("function", "Addon", "InfinitySearch: Set Keybinding", nil, function() 
+        InfinitySearch.lock.close = true;
+        AceConfigDialog:Open("InfinitySearch", "general");
+    end); 
+    Collections.Load("function", "Addon", "InfinitySearch: Toggle Flyout Direction", nil, function()
+        InfinitySearch.lock.close = true;
+        if InfinitySearch.db.profile.direction == "up" then
+            InfinitySearch.db.profile.direction = "down";
+        else
+            InfinitySearch.db.profile.direction = "up"
+        end
+        InfinitySearch:UpdateLayout();
+    end);
+    Collections.Load("function", "Addon", "InfinitySearch: Emote Dance", nil, function()
+        InfinitySearch.lock.close = true;
+        DoEmote("dance");  
+    end);
+    Collections.Load("function", "Addon", "InfinitySearch: Emote Happy", nil, function()
+        InfinitySearch.lock.close = true;
+        DoEmote("happy");  
+    end);
+end
+
 function addon:RegisterAddonMacrotext(addon, command, icon, action)
    Collections.RegisterThirdparty({
         addon = addon,
         command = command,
         icon = icon, 
-        execute = "macrotext",
+        runAs = "macrotext",
         action = action
     });
 end
@@ -52,7 +84,7 @@ function addon:RegisterAddonFunction(addon, command, icon, action)
         addon = addon,
         command = command,
         icon = icon, 
-        execute = "function",
+        runAs = "function",
         action = action
     });
 end
@@ -79,9 +111,9 @@ function Collections.UnregisterAddonCommand(addon, command)
     ThirdPartyCommands[addon][command] = nil;
 end
 
-function Collections.Load(execute, type, command, icon, action)
+function Collections.Load(runAs, type, command, icon, action)
     local o = {
-        execute = execute,
+        runAs = runAs,
         icon = icon or addon.defaults.icon,
         command = command,
         type = type,
@@ -102,7 +134,7 @@ end
 
 function Collections.LoadAddon(addon)
     for key, val in pairs(ThirdPartyCommands[addon]) do
-        Collections.Load(val.execute, "Addon", addon ..": ".. val.command, val.icon, val.action)
+        Collections.Load(val.runAs, "Addon", addon ..": ".. val.command, val.icon, val.action)
     end
 end
 

@@ -109,7 +109,10 @@ function addon:CreateOption(n)
     f:SetSize(400, 40)
     f:SetBackdrop(addon.defaults.parentBackdrop)
     f:SetBackdropBorderColor(0, 0, 0, 0)
-    f:SetScript("PostClick", function() addon:Close() end)
+    f:SetScript("PostClick", function() 
+        addon:Select(n);
+        addon:Close();
+     end);
 
     local ff = f:CreateFontString("InfinitySearchOption" .. n .. "Name", "HIGH")
     ff:SetPoint("TOPLEFT", f, "TOPLEFT", 42, 0)
