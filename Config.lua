@@ -8,7 +8,25 @@ local Config = { };
 Media:Register("font", "AlegreyaSansSC-Bold", [[Interface\AddOns\InfinitySearch\fonts\AlegreyaSansSC-Bold.ttf]])
 Media:Register("font", "AlegreyaSansSC-ExtraBold", [[Interface\AddOns\InfinitySearch\fonts\AlegreyaSansSC-ExtraBold.ttf]])
 function addon:LoadConfig()
-    self.db = LibStub("AceDB-3.0"):New("InfinitySearchDB", { profile = Config.BaseProfile() });
+    Config.BaseProfile = {
+        version = 1.4,
+        searchbar = Config.FrameConfigFactory({ font = "AlegreyaSansSC-ExtraBold", fontSize = 38, height = 64}),
+        opt1 = Config.FrameConfigFactory({ backdropColor = {.1, .1, .1, 1}, backdropColorHighlight = {.7, .91, .45, 1} }),
+        opt2 = Config.FrameConfigFactory({ backdropColor = {.1, .1, .1, 1}, backdropColorHighlight = {.89, .16, .95, 1} }),
+        opt3 = Config.FrameConfigFactory({ backdropColor = {.1, .1, .1, 1}, backdropColorHighlight = {.15, .43, .96, 1} }),
+        opt4 = Config.FrameConfigFactory({ backdropColor = {.1, .1, .1, 1}, backdropColorHighlight = {100, 0, .19, 1} }),
+        opt5 = Config.FrameConfigFactory({ backdropColor = {.1, .1, .1, 1}, backdropColorHighlight = {100, .55, 0, 1} }),
+        direction = "down",
+        collections = {
+            toys = true,
+            pets = true,
+            spells = true,
+            mounts = true,
+            consumables = true,
+            ui = true
+        }
+    }
+    self.db = LibStub("AceDB-3.0"):New("InfinitySearchDB", { profile = Config.BaseProfile });
     self.db.RegisterCallback(self, "OnProfileChanged", "ProfileVersionUpgrade");
     self.db.RegisterCallback(self, "OnProfileReset", "ProfileVersionUpgrade");
     addon:ProfileVersionUpgrade();
@@ -19,13 +37,6 @@ function addon:LoadConfig()
             name = "Toggle Edit Mode",
             func = function() addon:ToggleEditMode() end
         },
-        {
-            type = "select",
-            name = "Flyout Direction",
-            values = { up = "Up", down = "Down"},
-            get = function() return addon.db.profile.direction end,
-            set = function(_, val) addon.db.profile.direction = val; addon:UpdateLayout(); end
-        }, 
         Config.HeaderFactory("Keybinds"),
         Config.KeybindFactory("Toggle Infinity Search", "INFINITYSEARCH_TOGGLE"),
         Config.KeybindFactory("Select Option 1", "CLICK InfinitySearchOption1:LeftButton"),
@@ -41,8 +52,19 @@ function addon:LoadConfig()
             name = "Toggle Edit Mode",
             func = function() addon:ToggleEditMode() end
         },
+        {
+            type = "select",
+            name = "Flyout Direction",
+            values = { up = "Up", down = "Down"},
+            get = function() return addon.db.profile.direction end,
+            set = function(_, val) addon.db.profile.direction = val; addon:UpdateLayout(); end
+        }, 
+        Config.Break(""),
         Config.HeaderFactory("Searchbar"),
-        Config.RangeConfigFactory("Font Size", "searchbar", "fontSize", "", 6, 24, 1),
+        Config.RangeConfigFactory("Height", "searchbar", "height", "", 10, 400, 1),
+        Config.RangeConfigFactory("Width", "searchbar", "width", "", 50, 1200, 1),
+        Config.Break(""),
+        Config.RangeConfigFactory("Font Size", "searchbar", "fontSize", "", 6, 100, 1),
         Config.FontConfigFactory("Font", "searchbar", "font"),
         Config.Break(""),
         Config.ColorConfigFactory("Font Color", "searchbar", "fontColor" ),
@@ -53,7 +75,7 @@ function addon:LoadConfig()
         Config.HeaderFactory("Option 1"),
         {
             type = "toggle",
-            name = "Copy changes to all bars",
+            name = "Sync new changes to other options",
             get = function() return addon.lock.singleOptionTheme end,
             set = function(_, val) 
                 addon.lock.singleOptionTheme = val;
@@ -61,7 +83,10 @@ function addon:LoadConfig()
             end,
             width = "full"
         },
-        Config.RangeConfigFactory("Font Size", "opt1", "fontSize", "", 6, 24, 1),
+        Config.RangeConfigFactory("Vertical Offset", "opt1", "verticalOffset", "", 0, 100, 1),
+        Config.RangeConfigFactory("Height", "opt1", "height", "", 10, 400, 1),
+        Config.RangeConfigFactory("Width", "opt1", "width", "", 50, 1200, 1),
+        Config.RangeConfigFactory("Font Size", "opt1", "fontSize", "", 6, 100, 1),
         Config.FontConfigFactory("Font", "opt1", "font", ""),
         Config.Break(""),
         Config.ColorConfigFactory("Font Color", "opt1", "fontColor", "" ),
@@ -70,8 +95,12 @@ function addon:LoadConfig()
         Config.ColorConfigFactory("Backdrop Color", "opt1", "backdropColor", "" ),
         Config.ColorConfigFactory("Highlight Color", "opt1", "backdropColorHighlight", "" ),
         Config.Break(""),
+        
         Config.HeaderFactory("Option 2", "singleOptionTheme"),
-        Config.RangeConfigFactory("Font Size", "opt2", "fontSize", "singleOptionTheme", 6, 24, 1),
+        Config.RangeConfigFactory("Vertical Offset", "opt2", "verticalOffset", "singleOptionTheme", 0, 100, 1),
+        Config.RangeConfigFactory("Height", "opt2", "height", "singleOptionTheme", 10, 400, 1),
+        Config.RangeConfigFactory("Width", "opt2", "width", "singleOptionTheme", 50, 1200, 1),
+        Config.RangeConfigFactory("Font Size", "opt2", "fontSize", "singleOptionTheme", 6, 100, 1),
         Config.FontConfigFactory("Font", "opt2", "font", "singleOptionTheme"),
         Config.Break(""),
         Config.ColorConfigFactory("Font Color", "opt2", "fontColor", "singleOptionTheme" ),
@@ -79,8 +108,12 @@ function addon:LoadConfig()
         Config.Break(""),
         Config.ColorConfigFactory("Backdrop Color", "opt2", "backdropColor", "singleOptionTheme" ),
         Config.ColorConfigFactory("Highlight Color", "opt2", "backdropColorHighlight" , "singleOptionTheme"), 
+        
         Config.HeaderFactory("Option 3", "singleOptionTheme"),
-        Config.RangeConfigFactory("Font Size", "opt3", "fontSize", "singleOptionTheme", 6, 24, 1),
+        Config.RangeConfigFactory("Vertical Offset", "opt3", "verticalOffset", "singleOptionTheme", 0, 100, 1),
+        Config.RangeConfigFactory("Height", "opt3", "height", "singleOptionTheme", 10, 400, 1),
+        Config.RangeConfigFactory("Width", "opt3", "width", "singleOptionTheme", 50, 1200, 1),
+        Config.RangeConfigFactory("Font Size", "opt3", "fontSize", "singleOptionTheme", 6, 100, 1),
         Config.FontConfigFactory("Font", "opt3", "font", "singleOptionTheme"),
         Config.Break(""),
         Config.ColorConfigFactory("Font Color", "opt3", "fontColor", "singleOptionTheme" ),
@@ -88,8 +121,12 @@ function addon:LoadConfig()
         Config.Break(""),
         Config.ColorConfigFactory("Backdrop Color", "opt3", "backdropColor", "singleOptionTheme" ),
         Config.ColorConfigFactory("Highlight Color", "opt3", "backdropColorHighlight" , "singleOptionTheme"),
+        
         Config.HeaderFactory("Option 4", "singleOptionTheme"),
-        Config.RangeConfigFactory("Font Size", "opt4", "fontSize", "singleOptionTheme", 6, 24, 1),
+        Config.RangeConfigFactory("Vertical Offset", "opt4", "verticalOffset", "singleOptionTheme", 0, 100, 1),
+        Config.RangeConfigFactory("Height", "opt4", "height", "singleOptionTheme", 10, 400, 1),
+        Config.RangeConfigFactory("Width", "opt4", "width", "singleOptionTheme", 50, 1200, 1),
+        Config.RangeConfigFactory("Font Size", "opt4", "fontSize", "singleOptionTheme", 6, 100, 1),
         Config.FontConfigFactory("Font", "opt4", "font", "singleOptionTheme"),
         Config.Break(""),
         Config.ColorConfigFactory("Font Color", "opt4", "fontColor", "singleOptionTheme" ),
@@ -97,8 +134,12 @@ function addon:LoadConfig()
         Config.Break(""),
         Config.ColorConfigFactory("Backdrop Color", "opt4", "backdropColor", "singleOptionTheme" ),
         Config.ColorConfigFactory("Highlight Color", "opt4", "backdropColorHighlight" , "singleOptionTheme"), 
+
         Config.HeaderFactory("Option 5", "singleOptionTheme"),
-        Config.RangeConfigFactory("Font Size", "opt5", "fontSize", "singleOptionTheme", 6, 24, 1),
+        Config.RangeConfigFactory("Vertical Offset", "opt5", "verticalOffset", "singleOptionTheme", 0, 100, 1),
+        Config.RangeConfigFactory("Height", "opt5", "height", "singleOptionTheme", 10, 400, 1),
+        Config.RangeConfigFactory("Width", "opt5", "width", "singleOptionTheme", 50, 1200, 1),
+        Config.RangeConfigFactory("Font Size", "opt5", "fontSize", "singleOptionTheme", 6, 100, 1),
         Config.FontConfigFactory("Font", "opt5", "font", "singleOptionTheme"),
         Config.Break(""),
         Config.ColorConfigFactory("Font Color", "opt5", "fontColor", "singleOptionTheme" ),
@@ -150,45 +191,42 @@ end
 function addon:ProfileVersionUpgrade()
     self.db.profile.version = self.db.profile.version or 0;
     if self.db.profile.version < 1.2 then
-        self.db.profile = Config.BaseProfile();
+        self.db.profile.version = 1.2;
+        self.db.profile = Config.BaseProfile;
     end
     if self.db.profile.version < 1.3 then
+        self.db.profile.version = 1.3;
         self.db.profile.collections.ui = true;
+    end
+    if self.db.profile.version < 1.4 then 
+        self.db.profile.version = 1.4;
+        for i, key in ipairs({'searchbar', 'opt1', 'opt2', 'opt3', 'opt4', 'opt5'}) do
+            self.db.profile[key].height = 42;
+            self.db.profile[key].width = 400;
+            self.db.profile[key].verticalOffset = 8;
+        end
     end
     if InfinitySearchParent then
         addon:UpdateLayout()
     end
 end
-function Config.BaseProfile()
-    return {
-        version = 1.3,
-        searchbar = Config.FrameConfigFactory("AlegreyaSansSC-ExtraBold", 20, {0, 0, 0, 1 }),
-        opt1 = Config.FrameConfigFactory("AlegreyaSansSC-Bold", 14, {.7, .91, .45, 1}),
-        opt2 = Config.FrameConfigFactory("AlegreyaSansSC-Bold", 14, {.89, .16, .95, 1}),
-        opt3 = Config.FrameConfigFactory("AlegreyaSansSC-Bold", 14, {.15, .43, .96, 1}),
-        opt4 = Config.FrameConfigFactory("AlegreyaSansSC-Bold", 14, {100, 0, .19, 1}),
-        opt5 = Config.FrameConfigFactory("AlegreyaSansSC-Bold", 14, {100, .55, 0, 1}),
-        direction = "down",
-        collections = {
-            toys = true,
-            pets = true,
-            spells = true,
-            mounts = true,
-            consumables = true,
-            ui = true
-        }
-    }
-end
 
-function Config.FrameConfigFactory(font, fontSize, highlight)
-    return {
-        font = font,
-        fontSize = fontSize,
+function Config.FrameConfigFactory(overrides)
+    local o = {
+        font = "AlegreyaSansSC-Bold",
+        fontSize = 18,
         fontColor = {1, 1, 1, 1},
         fontColorHighlight = {1, 1, 1, 1},
         backdropColor = {0, 0, 0, 1},
-        backdropColorHighlight = highlight
+        backdropColorHighlight = {0, 0, 0, 1 },
+        height = 42,
+        width = 500,
+        verticalOffset = 0
     }
+    for key, val in pairs(overrides) do
+       o[key] = overrides[key];
+    end
+    return o;
 end
 
 function Config.ArrayToDictionary(ary)
@@ -290,6 +328,20 @@ function Config.FontConfigFactory(label, target, property, lock)
         dialogControl = "LSM30_Font",
         name = label,
         values = Media:HashTable("font"),
+        get = function() return addon.db.profile[target][property] end,
+        set = function(self, val) Config.UpdateDBProfile(target, property, val) end,
+        hidden = function() return addon.lock[lock] end,
+        disabled = function() return addon.lock[lock] end,
+        width = "double"
+    };
+end
+
+function Config.BackgroundConfigFactory(label, target, property, lock)
+    return {
+        type = "select",
+        dialogControl = "LSM30_Background",
+        name = label,
+        values = Media:HashTable("background"),
         get = function() return addon.db.profile[target][property] end,
         set = function(self, val) Config.UpdateDBProfile(target, property, val) end,
         hidden = function() return addon.lock[lock] end,

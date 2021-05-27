@@ -81,9 +81,9 @@ function addon:CreateOptions()
     local f = CreateFrame("Frame", "InfinitySearchOptions", InfinitySearchParent, BackdropTemplateMixin and "BackdropTemplate")
     local cInset = 8;
     if addon.db.profile.direction == "down" then
-        f:SetPoint("TOP", InfinitySearchParent, "BOTTOM", 12)
+        f:SetPoint("TOP", InfinitySearchParent, "BOTTOM", 0)
     else
-        f:SetPoint("BOTTOM", InfinitySearchParent, "TOP", 12)
+        f:SetPoint("BOTTOM", InfinitySearchParent, "TOP", 0)
     end
     f:Show()
     addon:CreateOption(1)
@@ -101,14 +101,14 @@ function addon:CreateOption(n)
 
     local f = CreateFrame("Button", "InfinitySearchOption" .. n, InfinitySearchOptions, BackdropTemplateMixin and "BackdropTemplate,SecureActionButtonTemplate")
     if addon.db.profile.direction == "down" then
-        f:SetPoint("TOP", parent, "BOTTOM", 12)
+        f:SetPoint("TOP", parent, "BOTTOM", 0)
     else
-        f:SetPoint("BOTTOM", parent, "TOP", 12)
+        f:SetPoint("BOTTOM", parent, "TOP", 0)
     end
     f:RegisterForClicks("AnyUp");
-    f:SetSize(400, 40)
-    f:SetBackdrop(addon.defaults.parentBackdrop)
-    f:SetBackdropBorderColor(0, 0, 0, 0)
+    f:SetSize(400, 40);
+    f:SetBackdrop(addon.defaults.parentBackdrop);
+    f:SetBackdropBorderColor(0, 0, 0, 0);
     f:SetScript("PostClick", function() 
         addon:Select(n);
         addon:Close();
@@ -133,12 +133,13 @@ function addon:CreateOption(n)
 end
 
 function addon:UpdateLayout()
-    InfinitySearchOptions:ClearAllPoints() 
-    InfinitySearchEditBox:SetFont(Media:Fetch("font", self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize)
+    InfinitySearchOptions:ClearAllPoints();
+    InfinitySearchEditBox:SetFont(Media:Fetch("font", self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize);
+    InfinitySearchParent:SetSize(self.db.profile.searchbar.width, self.db.profile.searchbar.height);
     if addon.db.profile.direction == "down" then
-        InfinitySearchOptions:SetPoint("TOP", InfinitySearchParent, "BOTTOM", 12)
+        InfinitySearchOptions:SetPoint("TOP", InfinitySearchParent, "BOTTOM", 0)
     else
-        InfinitySearchOptions:SetPoint("BOTTOM", InfinitySearchParent, "TOP", 12)
+        InfinitySearchOptions:SetPoint("BOTTOM", InfinitySearchParent, "TOP", 0)
     end
     
     if InfinitySearchEditBox:HasFocus() then
@@ -160,11 +161,12 @@ function addon:UpdateLayout()
         end
       
         o.label:SetFont(Media:Fetch("font", self.db.profile[opt].font), self.db.profile[opt].fontSize)
-        o.frame:ClearAllPoints();
+        o.frame:SetSize(self.db.profile[opt].width, self.db.profile[opt].height);
+        o.frame:ClearAllPoints();        
         if addon.db.profile.direction == "down" then
-            o.frame:SetPoint("TOP", parent, "BOTTOM", 12)
+            o.frame:SetPoint("TOP", parent, "BOTTOM", 0, self.db.profile[opt].verticalOffset * -1)
         else
-            o.frame:SetPoint("BOTTOM", parent, "TOP", 12)
+            o.frame:SetPoint("BOTTOM", parent, "TOP", 0, self.db.profile[opt].verticalOffset)
         end
 
         if i == addon.currentSelected then

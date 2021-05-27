@@ -71,22 +71,11 @@ function addon:PopulateEditMode()
 end
 
 function addon:RegisterAddonMacrotext(addon, command, icon, action)
-   Collections.RegisterThirdparty({
-        addon = addon,
-        command = command,
-        icon = icon, 
-        runAs = "macrotext",
-        action = action
-    });
+   Collections.RegisterThirdparty({ addon = addon, command = command, icon = icon, action = action, runAs = "macrotext"});
 end
+
 function addon:RegisterAddonFunction(addon, command, icon, action)
-   Collections.RegisterThirdparty({
-        addon = addon,
-        command = command,
-        icon = icon, 
-        runAs = "function",
-        action = action
-    });
+   Collections.RegisterThirdparty({ addon = addon, command = command, icon = icon, action = action, runAs = "function"});
 end
 
 function addon:UnregisterAddonCommand(addon, command)
@@ -112,13 +101,7 @@ function Collections.UnregisterAddonCommand(addon, command)
 end
 
 function Collections.Load(runAs, type, command, icon, action)
-    local o = {
-        runAs = runAs,
-        icon = icon or addon.defaults.icon,
-        command = command,
-        type = type,
-        action = action
-    }
+    local o = { runAs = runAs, icon = icon or addon.defaults.icon, command = command, type = type, action = action };
     Collections.SetSearch(o);
     table.insert(addon.list, o)
     table.insert(addon.searchable, o.search);
@@ -139,6 +122,30 @@ function Collections.LoadAddon(addon)
 end
 
 function Collections.LoadMounts()
+    if (addon:ClientVersionAtleast("3.0.0")) then
+        Collections.LoadMountsRetail();
+    else
+        Collections.LoadMountsClassic();
+    end
+end
+
+function Collections.LoadMountsClassic()
+    local exists = {}
+    for bag = 0, NUM_BAG_SLOTS do
+        for slot = 1, GetContainerNumSlots(bag) do
+            id = GetContainerItemID(bag, slot)
+            if id ~= nil and exists[id] == nil then
+                local name, link, rarity, level, minLevel, type, subtype, stackCount, equipLocation, icon = GetItemInfo(id);
+                if subtype == "Mount" then
+                    Collections.Load("macrotext", "Mount", name, icon, SLASH_USE1 .. " " .. name);
+                end
+                exists[id] = true;
+            end
+        end
+    end
+end
+
+function Collections.LoadMountsRetail()
     local mountIDs = C_MountJournal.GetMountIDs();
     for i, mountID in ipairs(mountIDs) do
         local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(mountID);
@@ -149,6 +156,14 @@ function Collections.LoadMounts()
 end
 
 function Collections.LoadPets()
+    if (addon:ClientVersionAtleast("3.0.0")) then
+        Collections.LoadPetsRetail();
+    else
+        Collections.LoadPetsClassic();
+    end
+end
+
+function Collections.LoadPetsRetail()
     C_PetJournal.ClearSearchFilter()
     C_PetJournal.SetAllPetSourcesChecked(true)
     C_PetJournal.SetAllPetTypesChecked(true)
@@ -166,15 +181,33 @@ function Collections.LoadPets()
     end
 end
 
-function Collections.LoadToys()
-    C_ToyBox.SetAllSourceTypeFilters(true)
-    C_ToyBox.SetCollectedShown(true)
-    C_ToyBox.SetUncollectedShown(false)
+function Collections.LoadPetsClassic()
+    local exists = {}
+    for bag = 0, NUM_BAG_SLOTS do
+        for slot = 1, GetContainerNumSlots(bag) do
+            id = GetContainerItemID(bag, slot)
+            if id ~= nil and exists[id] == nil then
+                local name, link, rarity, level, minLevel, type, subtype, stackCount, equipLocation, icon = GetItemInfo(id);
+                if subtype == "Pet" then
+                    Collections.Load("macrotext", "Pet", name, icon, SLASH_USE1 .. " " .. name);
+                end
+                exists[id] = true;
+            end
+        end
+    end
+end
 
-    for i = 1, C_ToyBox.GetNumFilteredToys() do
-        local id, name, icon, isFavorite, hasFanfare = C_ToyBox.GetToyInfo(C_ToyBox.GetToyFromIndex(i));
-        if name and C_ToyBox.IsToyUsable(id) then
-            Collections.Load("macrotext", "Toy", name, icon, SLASH_USE_TOY1 .. " " .. name);
+function Collections.LoadToys()
+    if (addon:ClientVersionAtleast("3.0.0")) then
+        C_ToyBox.SetAllSourceTypeFilters(true)
+        C_ToyBox.SetCollectedShown(true)
+        C_ToyBox.SetUncollectedShown(false)
+
+        for i = 1, C_ToyBox.GetNumFilteredToys() do
+            local id, name, icon, isFavorite, hasFanfare = C_ToyBox.GetToyInfo(C_ToyBox.GetToyFromIndex(i));
+            if name and C_ToyBox.IsToyUsable(id) then
+                Collections.Load("macrotext", "Toy", name, icon, SLASH_USE_TOY1 .. " " .. name);
+            end
         end
     end
 end

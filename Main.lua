@@ -19,7 +19,7 @@ addon.defaults = {
         tile = true,
         tileSize = 16,
         edgeSize = 16,
-        insets = {left = 4, right = 4, top = 4, bottom = 4}
+        insets = {left = 0, right = 0, top = 0, bottom = 0}
     }
 };
 
@@ -31,6 +31,7 @@ _G["BINDING_NAME_CLICK InfinitySearchOption4:LeftButton"] = "Select Option 4";
 _G["BINDING_NAME_CLICK InfinitySearchOption5:LeftButton"] = "Select Option 5";
 
 function addon:OnInitialize()
+    addon.clientVersion = addon:ParseVersion(select(1, GetBuildInfo()));
     addon:LoadConfig();
     AceEvent:RegisterEvent("PLAYER_LOGIN", function(_, e)
         if (GetBindingAction(addon.defaults.keybind) == "" and GetBindingKey("INFINITYSEARCH_TOGGLE") == nil) then
@@ -42,6 +43,24 @@ end
 
 function addon:OnEnable()
     addon:CreateFrames();  
+end
+
+function addon:ClientVersionAtleast(version)
+    local v = addon:ParseVersion(version);
+    for i, val in ipairs(addon.clientVersion) do
+        if (val > v[i]) then
+            return false;
+        end
+    end
+    return true;
+end
+
+function addon:ParseVersion(version)
+    local v = {}
+    for token in string.gmatch(version, "[^.]+") do
+        table.insert(v, tonumber(token));
+    end
+    return v;
 end
 
 function addon:SetKeybind(key, cmd)
