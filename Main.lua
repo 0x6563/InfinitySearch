@@ -44,12 +44,11 @@ end
 function addon:OnEnable()
     addon:CreateFrames();  
 end
-
 function addon:ClientVersionAtleast(version)
     local v = addon:ParseVersion(version);
     for i, val in ipairs(addon.clientVersion) do
-        if (val > v[i]) then
-            return false;
+        if val ~= v[i] then
+            return (val > v[i]);
         end
     end
     return true;
