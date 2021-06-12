@@ -9,7 +9,7 @@ Media:Register("font", "AlegreyaSansSC-Bold", [[Interface\AddOns\InfinitySearch\
 Media:Register("font", "AlegreyaSansSC-ExtraBold", [[Interface\AddOns\InfinitySearch\fonts\AlegreyaSansSC-ExtraBold.ttf]])
 function addon:LoadConfig()
     Config.BaseProfile = {
-        version = 1.4,
+        version = 1.5,
         searchbar = Config.FrameConfigFactory({ font = "AlegreyaSansSC-ExtraBold", fontSize = 38, height = 64}),
         opt1 = Config.FrameConfigFactory({ backdropColor = {.1, .1, .1, 1}, backdropColorHighlight = {.7, .91, .45, 1} }),
         opt2 = Config.FrameConfigFactory({ backdropColor = {.1, .1, .1, 1}, backdropColorHighlight = {.89, .16, .95, 1} }),
@@ -23,7 +23,8 @@ function addon:LoadConfig()
             spells = true,
             mounts = true,
             consumables = true,
-            ui = true
+            ui = true, 
+            libDataBrokerLaunchers = true
         }
     }
     self.db = LibStub("AceDB-3.0"):New("InfinitySearchDB", { profile = Config.BaseProfile });
@@ -285,7 +286,8 @@ function addon:RefreshCollectionsConfig()
         Config.ToggleFactory("Pets", "collections", "pets", ""),
         Config.ToggleFactory("Spells", "collections", "spells", ""),
         Config.ToggleFactory("Toys", "collections", "toys", ""),
-        Config.ToggleFactory("UI Panels", "collections", "ui", "")
+        Config.ToggleFactory("UI Panels", "collections", "ui", ""),
+        Config.ToggleFactory("LibDataBroker Launchers", "collections", "libDataBrokerLaunchers", "")
     };
     local addons = {};
     local extras = {};

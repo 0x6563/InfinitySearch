@@ -10,3 +10,4 @@ Collections.lua
 Frames.lua
 Fuzzy.lua
 Extras.lua
+Libs/LibDataBroker-1.1/LibDataBroker-1-1.lua

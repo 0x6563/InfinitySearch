@@ -1,4 +1,6 @@
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
+local ldb = LibStub:GetLibrary("LibDataBroker-1.1");
+
 local addon = InfinitySearch;
 local Collections = {};
 local ThirdPartyCommands = {};
@@ -30,6 +32,9 @@ function addon:Populate()
     end
     if addon:CollectionEnabled("ui") then 
         Collections.LoadUIPanels();
+    end
+    if addon:CollectionEnabled("libDataBrokerLaunchers") then 
+        Collections.LoadLibDataBrokerLaunchers();
     end
 
     for key, val in pairs(ThirdPartyCommands) do
@@ -285,3 +290,10 @@ function Collections.LoadUIPanels()
     Collections.Load("function", "UI", "Open Weekly Rewards",  nil, function() WeeklyRewards_ShowUI() end);
 end
 
+function Collections.LoadLibDataBrokerLaunchers()
+    for name, dataobj in ldb:DataObjectIterator() do 
+        if dataobj.type == 'launcher' then
+            Collections.Load("function", "DataBroker Launcher", dataobj.label or name, dataobj.icon, function(s, btn) dataobj.OnClick(s, btn) end);
+        end
+    end
+end
