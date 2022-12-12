@@ -64,8 +64,8 @@ function addon:CreateFrames()
         db:SetPoint("TOP", 0)
         db:SetPoint("BOTTOM", 0)
         
-        local ff = db:CreateFontString("InfinitySearchDragBoxText", "HIGH")
-        ff:SetFont(Media:Fetch("font", self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize)
+        local ff = db:CreateFontString("InfinitySearchDragBoxText", "ARTWORK", "GameFontNormal")
+        ff:SetFont(Media:Fetch("font", self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize, "")
         ff:SetPoint("TOPLEFT", f, "TOPLEFT", 42, 0)
         ff:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 42, 0)
         ff:SetText("Drag Me")
@@ -105,7 +105,8 @@ function addon:CreateOption(n)
     else
         f:SetPoint("BOTTOM", parent, "TOP", 0)
     end
-    f:RegisterForClicks("AnyUp");
+    f:SetMouseClickEnabled(true)
+    f:RegisterForClicks("LeftButtonUp", "LeftButtonDown")
     f:SetSize(400, 40);
     f:SetBackdrop(addon.defaults.parentBackdrop);
     f:SetBackdropBorderColor(0, 0, 0, 0);
@@ -114,11 +115,11 @@ function addon:CreateOption(n)
         addon:Close();
      end);
 
-    local ff = f:CreateFontString("InfinitySearchOption" .. n .. "Name", "HIGH")
+    local ff = f:CreateFontString("InfinitySearchOption" .. n .. "Name",  "ARTWORK")
     ff:SetPoint("TOPLEFT", f, "TOPLEFT", 42, 0)
     ff:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 42, 0)
 
-    local icn = f:CreateTexture("InfinitySearchOption" .. n .. "Icon", "HIGH")
+    local icn = f:CreateTexture("InfinitySearchOption" .. n .. "Icon", "ARTWORK")
     icn:SetWidth(24);
     icn:SetHeight(24);
     icn:SetPoint("TOPLEFT", f, "TOPLEFT", 4, -8)
@@ -134,7 +135,7 @@ end
 
 function addon:UpdateLayout()
     InfinitySearchOptions:ClearAllPoints();
-    InfinitySearchEditBox:SetFont(Media:Fetch("font", self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize);
+    InfinitySearchEditBox:SetFont(Media:Fetch("font", self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize, "");
     InfinitySearchParent:SetSize(self.db.profile.searchbar.width, self.db.profile.searchbar.height);
     if addon.db.profile.direction == "down" then
         InfinitySearchOptions:SetPoint("TOP", InfinitySearchParent, "BOTTOM", 0)
@@ -146,7 +147,7 @@ function addon:UpdateLayout()
         InfinitySearchEditBox:SetTextColor(unpack(self.db.profile.searchbar.fontColorHighlight))
         InfinitySearchParent:SetBackdropColor(unpack(self.db.profile.searchbar.backdropColorHighlight));
     else
-        InfinitySearchDragBoxText:SetFont(Media:Fetch("font", self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize)
+        InfinitySearchDragBoxText:SetFont(Media:Fetch("font", self.db.profile.searchbar.font), self.db.profile.searchbar.fontSize, "")
 
         InfinitySearchEditBox:SetTextColor(unpack(self.db.profile.searchbar.fontColor))
         InfinitySearchParent:SetBackdropColor(unpack(self.db.profile.searchbar.backdropColor))
@@ -160,7 +161,7 @@ function addon:UpdateLayout()
             parent = addon.options[i - 1].frame 
         end
       
-        o.label:SetFont(Media:Fetch("font", self.db.profile[opt].font), self.db.profile[opt].fontSize)
+        o.label:SetFont(Media:Fetch("font", self.db.profile[opt].font), self.db.profile[opt].fontSize, "")
         o.frame:SetSize(self.db.profile[opt].width, self.db.profile[opt].height);
         o.frame:ClearAllPoints();        
         if addon.db.profile.direction == "down" then

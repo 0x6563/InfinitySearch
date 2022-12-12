@@ -160,7 +160,9 @@ function addon:Filter()
     for ii, f in ipairs(found) do
         addon:UpdateOption(c, addon.list[f[1]])
         c = c + 1
-        if c > 5 then break end
+        if c > 5 then 
+            break
+        end
     end
     addon:Select(1);
 end

@@ -137,8 +137,8 @@ end
 function Collections.LoadMountsClassic()
     local exists = {}
     for bag = 0, NUM_BAG_SLOTS do
-        for slot = 1, GetContainerNumSlots(bag) do
-            id = GetContainerItemID(bag, slot)
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            id = C_Container.GetContainerItemID(bag, slot)
             if id ~= nil and exists[id] == nil then
                 local name, link, rarity, level, minLevel, type, subtype, stackCount, equipLocation, icon = GetItemInfo(id);
                 if subtype == "Mount" then
@@ -189,8 +189,8 @@ end
 function Collections.LoadPetsClassic()
     local exists = {}
     for bag = 0, NUM_BAG_SLOTS do
-        for slot = 1, GetContainerNumSlots(bag) do
-            id = GetContainerItemID(bag, slot)
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            id = C_Container.GetContainerItemID(bag, slot)
             if id ~= nil and exists[id] == nil then
                 local name, link, rarity, level, minLevel, type, subtype, stackCount, equipLocation, icon = GetItemInfo(id);
                 if subtype == "Pet" then
@@ -220,8 +220,8 @@ end
 function Collections.LoadConsumables()
     local exists = {}
     for bag = 0, NUM_BAG_SLOTS do
-        for slot = 1, GetContainerNumSlots(bag) do
-            id = GetContainerItemID(bag, slot)
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            id = C_Container.GetContainerItemID(bag, slot)
             if id ~= nil and exists[id] == nil then
                 local name, link, rarity, level, minLevel, type, subtype, stackCount, equipLocation, icon = GetItemInfo(id);
                 if type == "Consumable" then
