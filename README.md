@@ -1,4 +1,6 @@
 # InfinitySearch
+## NOTE
+As of 11.0.0 spells are currently not working
 
 ## Description
 Originally, InfinitySearch was about quickly accessing and using toys, mounts, and pets. That lasted about a week. It now allows opening UI panels, executing addon commands, casting spells, and macros.

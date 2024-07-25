@@ -33,7 +33,7 @@ function addon:CreateFrames()
             if not addon.lock.editMode then
                 return;
             end
-            point, relativeTo, relativePoint, x, y = self:GetPoint();
+            local point, relativeTo, relativePoint, x, y = self:GetPoint();
             addon.db.profile.position = {
                 point = point,
                 relativePoint = relativePoint,

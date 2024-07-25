@@ -1,4 +1,3 @@
-local addon = InfinitySearch;
 local AceConfigRegistry = LibStub("AceConfigRegistry-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local Media = LibStub("LibSharedMedia-3.0");
@@ -23,7 +22,8 @@ function addon:LoadConfig()
             spells = true,
             mounts = true,
             consumables = true,
-            ui = true, 
+            ui = true,
+            experimental = false,
             libDataBrokerLaunchers = true
         }
     }
@@ -59,7 +59,7 @@ function addon:LoadConfig()
             values = { up = "Up", down = "Down"},
             get = function() return addon.db.profile.direction end,
             set = function(_, val) addon.db.profile.direction = val; addon:UpdateLayout(); end
-        }, 
+        },
         Config.Break(""),
         Config.HeaderFactory("Searchbar"),
         Config.RangeConfigFactory("Height", "searchbar", "height", "", 10, 400, 1),
@@ -78,7 +78,7 @@ function addon:LoadConfig()
             type = "toggle",
             name = "Sync new changes to other options",
             get = function() return addon.lock.singleOptionTheme end,
-            set = function(_, val) 
+            set = function(_, val)
                 addon.lock.singleOptionTheme = val;
                 addon:UpdateLayout();
             end,
@@ -96,7 +96,7 @@ function addon:LoadConfig()
         Config.ColorConfigFactory("Backdrop Color", "opt1", "backdropColor", "" ),
         Config.ColorConfigFactory("Highlight Color", "opt1", "backdropColorHighlight", "" ),
         Config.Break(""),
-        
+
         Config.HeaderFactory("Option 2", "singleOptionTheme"),
         Config.RangeConfigFactory("Vertical Offset", "opt2", "verticalOffset", "singleOptionTheme", 0, 100, 1),
         Config.RangeConfigFactory("Height", "opt2", "height", "singleOptionTheme", 10, 400, 1),
@@ -105,11 +105,11 @@ function addon:LoadConfig()
         Config.FontConfigFactory("Font", "opt2", "font", "singleOptionTheme"),
         Config.Break(""),
         Config.ColorConfigFactory("Font Color", "opt2", "fontColor", "singleOptionTheme" ),
-        Config.ColorConfigFactory("Font Color Highlight", "opt2", "fontColorHighlight", "singleOptionTheme" ), 
+        Config.ColorConfigFactory("Font Color Highlight", "opt2", "fontColorHighlight", "singleOptionTheme" ),
         Config.Break(""),
         Config.ColorConfigFactory("Backdrop Color", "opt2", "backdropColor", "singleOptionTheme" ),
-        Config.ColorConfigFactory("Highlight Color", "opt2", "backdropColorHighlight" , "singleOptionTheme"), 
-        
+        Config.ColorConfigFactory("Highlight Color", "opt2", "backdropColorHighlight" , "singleOptionTheme"),
+
         Config.HeaderFactory("Option 3", "singleOptionTheme"),
         Config.RangeConfigFactory("Vertical Offset", "opt3", "verticalOffset", "singleOptionTheme", 0, 100, 1),
         Config.RangeConfigFactory("Height", "opt3", "height", "singleOptionTheme", 10, 400, 1),
@@ -122,7 +122,7 @@ function addon:LoadConfig()
         Config.Break(""),
         Config.ColorConfigFactory("Backdrop Color", "opt3", "backdropColor", "singleOptionTheme" ),
         Config.ColorConfigFactory("Highlight Color", "opt3", "backdropColorHighlight" , "singleOptionTheme"),
-        
+
         Config.HeaderFactory("Option 4", "singleOptionTheme"),
         Config.RangeConfigFactory("Vertical Offset", "opt4", "verticalOffset", "singleOptionTheme", 0, 100, 1),
         Config.RangeConfigFactory("Height", "opt4", "height", "singleOptionTheme", 10, 400, 1),
@@ -131,10 +131,10 @@ function addon:LoadConfig()
         Config.FontConfigFactory("Font", "opt4", "font", "singleOptionTheme"),
         Config.Break(""),
         Config.ColorConfigFactory("Font Color", "opt4", "fontColor", "singleOptionTheme" ),
-        Config.ColorConfigFactory("Font Color Highlight", "opt4", "fontColorHighlight", "singleOptionTheme" ), 
+        Config.ColorConfigFactory("Font Color Highlight", "opt4", "fontColorHighlight", "singleOptionTheme" ),
         Config.Break(""),
         Config.ColorConfigFactory("Backdrop Color", "opt4", "backdropColor", "singleOptionTheme" ),
-        Config.ColorConfigFactory("Highlight Color", "opt4", "backdropColorHighlight" , "singleOptionTheme"), 
+        Config.ColorConfigFactory("Highlight Color", "opt4", "backdropColorHighlight" , "singleOptionTheme"),
 
         Config.HeaderFactory("Option 5", "singleOptionTheme"),
         Config.RangeConfigFactory("Vertical Offset", "opt5", "verticalOffset", "singleOptionTheme", 0, 100, 1),
@@ -199,7 +199,7 @@ function addon:ProfileVersionUpgrade()
         self.db.profile.version = 1.3;
         self.db.profile.collections.ui = true;
     end
-    if self.db.profile.version < 1.4 then 
+    if self.db.profile.version < 1.4 then
         self.db.profile.version = 1.4;
         for i, key in ipairs({'searchbar', 'opt1', 'opt2', 'opt3', 'opt4', 'opt5'}) do
             self.db.profile[key].height = 42;
@@ -239,31 +239,31 @@ function Config.ArrayToDictionary(ary)
     return dictionary;
 end
 
-function Config.HeaderFactory(label, lock) 
+function Config.HeaderFactory(label, lock)
     return {
         type = "header",
         name = label,
         hidden = function() return addon.lock[lock] end,
         disabled = function() return addon.lock[lock] end
-    } 
+    }
 end
-function Config.DescriptionFactory(label, lock) 
+function Config.DescriptionFactory(label, lock)
     return {
         type = "description",
         name = label,
         hidden = function() return addon.lock[lock] end,
         disabled = function() return addon.lock[lock] end,
         width = "full"
-    } 
+    }
 end
-function Config.Break(lock) 
+function Config.Break(lock)
     return {
         type = "description",
         name = "",
         hidden = function() return addon.lock[lock] end,
         disabled = function() return addon.lock[lock] end,
         width = "full"
-    } 
+    }
 end
 function Config.ColorConfigFactory(label, target, property, lock)
     return {
@@ -284,18 +284,19 @@ function addon:RefreshCollectionsConfig()
         Config.ToggleFactory("Macros: Character", "collections", "characterMacros", ""),
         Config.ToggleFactory("Mounts", "collections", "mounts", ""),
         Config.ToggleFactory("Pets", "collections", "pets", ""),
-        Config.ToggleFactory("Spells", "collections", "spells", ""),
+        Config.ToggleFactory("Spells", "collections", "spells", true),
         Config.ToggleFactory("Toys", "collections", "toys", ""),
         Config.ToggleFactory("UI Panels", "collections", "ui", ""),
+        Config.ToggleFactory("Experimental", "collections", "experimental", ""),
         Config.ToggleFactory("LibDataBroker Launchers", "collections", "libDataBrokerLaunchers", "")
     };
     local addons = {};
     local extras = {};
-    function mergeConfig(header, tbl)
+    local function mergeConfig(header, tbl)
         if tbl[1] ~= nil then
             table.insert(config, Config.HeaderFactory(header));
             table.sort(tbl, function(a, b) return a.name:upper() < b.name:upper() end);
-            for _,v in ipairs(tbl) do 
+            for _,v in ipairs(tbl) do
                 table.insert(config, v);
             end
         end
@@ -303,7 +304,7 @@ function addon:RefreshCollectionsConfig()
     for key, val in pairs(self.db.profile.collections) do
         if string.sub(key, 1, 14) == "addon:Extras: " then
             table.insert(extras, Config.ToggleFactory(string.sub(key, 7), "collections", key, ""));
-        elseif string.sub(key, 1, 6) == "addon:" then 
+        elseif string.sub(key, 1, 6) == "addon:" then
             table.insert(addons, Config.ToggleFactory(string.sub(key, 7), "collections", key, ""));
         end
     end
@@ -384,5 +385,5 @@ function Config.UpdateDBProfile(target, property, val)
         addon.db.profile.opt4[property] = val;
         addon.db.profile.opt5[property] = val;
     end
-    addon:UpdateLayout(); 
+    addon:UpdateLayout();
 end

@@ -27,7 +27,6 @@
 local Loaded = CreateFrame("FRAME");
 Loaded:RegisterEvent("PLAYER_LOGIN");
 Loaded:SetScript("OnEvent", function(_, e)
-
     if InfinitySearch then
         InfinitySearch:RegisterAddonFunction("Extras: InfinitySearch", "Options", nil, function() InfinitySearch:ShowConfig(); end);
         InfinitySearch:RegisterAddonFunction("Extras: InfinitySearch", "Drag Mode", nil,
@@ -69,6 +68,16 @@ Loaded:SetScript("OnEvent", function(_, e)
         if Bartender4 then
             InfinitySearch:RegisterAddonMacrotext("Extras: Bartender4", "Options", nil, "/bt4");
             InfinitySearch:RegisterAddonMacrotext("Extras: Bartender4", "Toggle Lock", nil, "/bt4 lock");
+            local presets = {};
+            Bartender4.db:GetProfiles(presets);
+
+            for k, v in pairs(presets) do
+                InfinitySearch:RegisterAddonFunction("Extras: Bartender4", "Profile: " .. v, nil,
+                    function()
+                        Bartender4.db:SetProfile(v)
+                    end
+                );
+            end
         end
     end
 end);
