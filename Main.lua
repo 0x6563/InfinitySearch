@@ -7,7 +7,7 @@ InfinitySearch = {
     options = {},
     lock = {
         editMode = false,
-        close = false,
+        close = false
     },
     currentSelected = 1,
     defaults = {
@@ -19,7 +19,12 @@ InfinitySearch = {
             tile = true,
             tileSize = 16,
             edgeSize = 16,
-            insets = { left = 0, right = 0, top = 0, bottom = 0 }
+            insets = {
+                left = 0,
+                right = 0,
+                top = 0,
+                bottom = 0
+            }
         }
     }
 };
@@ -82,7 +87,9 @@ function InfinitySearch:Toggle()
 end
 
 function InfinitySearch:Show(text)
-    if InCombatLockdown() then return end
+    if InCombatLockdown() then
+        return
+    end
     InfinitySearch:UpdateLayout();
 
     if InfinitySearch.lock.editMode then
@@ -105,7 +112,9 @@ function InfinitySearch:Show(text)
     InfinitySearchEditBox:SetFocus();
 end
 
-function InfinitySearch:Unfocus() InfinitySearchEditBox:ClearFocus(); end
+function InfinitySearch:Unfocus()
+    InfinitySearchEditBox:ClearFocus();
+end
 
 function InfinitySearch:Close()
     if InfinitySearch.lock.close then
@@ -133,7 +142,9 @@ end
 function InfinitySearch:Select(n)
     local c = 0
     for i, o in ipairs(InfinitySearch.options) do
-        if o.frame:IsVisible() then c = c + 1 end
+        if o.frame:IsVisible() then
+            c = c + 1
+        end
     end
 
     if n < 1 then
@@ -160,7 +171,9 @@ function InfinitySearch:Filter()
         return
     end
     local found = fzy.filter(s, InfinitySearch.searchable)
-    table.sort(found, function(a, b) return a[3] > b[3] end)
+    table.sort(found, function(a, b)
+        return a[3] > b[3]
+    end)
     for ii, f in ipairs(found) do
         InfinitySearch:UpdateOption(c, InfinitySearch.list[f[1]])
         c = c + 1

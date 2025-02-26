@@ -78,11 +78,23 @@ function addon:PopulateEditMode()
 end
 
 function addon:RegisterAddonMacrotext(addon, command, icon, action)
-    Collections.RegisterThirdparty({ addon = addon, command = command, icon = icon, action = action, runAs = "macrotext" });
+    Collections.RegisterThirdparty({
+        addon = addon,
+        command = command,
+        icon = icon,
+        action = action,
+        runAs = "macrotext"
+    });
 end
 
 function addon:RegisterAddonFunction(addon, command, icon, action)
-    Collections.RegisterThirdparty({ addon = addon, command = command, icon = icon, action = action, runAs = "function" });
+    Collections.RegisterThirdparty({
+        addon = addon,
+        command = command,
+        icon = icon,
+        action = action,
+        runAs = "function"
+    });
 end
 
 function addon:UnregisterAddonCommand(addon, command)
@@ -108,7 +120,13 @@ function Collections.UnregisterAddonCommand(addon, command)
 end
 
 function Collections.Load(runAs, type, command, icon, action)
-    local o = { runAs = runAs, icon = icon or addon.defaults.icon, command = command, type = type, action = action };
+    local o = {
+        runAs = runAs,
+        icon = icon or addon.defaults.icon,
+        command = command,
+        type = type,
+        action = action
+    };
     Collections.SetSearch(o);
     table.insert(addon.list, o)
     table.insert(addon.searchable, o.search);
@@ -142,8 +160,7 @@ function Collections.LoadMountsClassic()
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local id = C_Container.GetContainerItemID(bag, slot)
             if id ~= nil and exists[id] == nil then
-                local name, link, rarity, level, minLevel, type, subtype, stackCount, equipLocation, icon = GetItemInfo(
-                    id);
+                local name, link, rarity, level, minLevel, type, subtype, stackCount, equipLocation, icon = GetItemInfo(id);
                 if subtype == "Mount" then
                     Collections.Load("macrotext", "Mount", name, icon, SLASH_USE1 .. " " .. name);
                 end
@@ -178,8 +195,7 @@ function Collections.LoadPetsRetail()
     local exists = {}
     local i = 1;
     local petID, speciesID, owned, customName, level, favorite, isRevoked, name, icon = C_PetJournal.GetPetInfoByIndex(i);
-    while (petID)
-    do
+    while (petID) do
         if name and owned and exists[name] == nil then
             Collections.Load("macrotext", "Pet", name, icon, "/summonpet " .. name)
             exists[name] = true;
@@ -195,8 +211,7 @@ function Collections.LoadPetsClassic()
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local id = C_Container.GetContainerItemID(bag, slot)
             if id ~= nil and exists[id] == nil then
-                local name, link, rarity, level, minLevel, type, subtype, stackCount, equipLocation, icon = GetItemInfo(
-                    id);
+                local name, link, rarity, level, minLevel, type, subtype, stackCount, equipLocation, icon = GetItemInfo(id);
                 if subtype == "Pet" then
                     Collections.Load("macrotext", "Pet", name, icon, SLASH_USE1 .. " " .. name);
                 end
@@ -225,12 +240,11 @@ function Collections.LoadExperiemental()
     if (addon:ClientVersionAtleast("7.0.0")) then
         for tradeSkillID, tradeSkill in pairs(Cache) do
             for _, recipe in pairs(tradeSkill) do
-                Collections.Load("function", "Profession", recipe.name, recipe.icon,
-                    function()
-                        C_TradeSkillUI.OpenRecipe(recipe.recipeID);
-                        C_TradeSkillUI.CraftRecipe(recipe.recipeID);
-                        C_TradeSkillUI.CloseTradeSkill();
-                    end);
+                Collections.Load("function", "Profession", recipe.name, recipe.icon, function()
+                    C_TradeSkillUI.OpenRecipe(recipe.recipeID);
+                    C_TradeSkillUI.CraftRecipe(recipe.recipeID);
+                    C_TradeSkillUI.CloseTradeSkill();
+                end);
             end
         end
     end
@@ -238,21 +252,24 @@ function Collections.LoadExperiemental()
     if (addon:ClientVersionAtleast("10.0.0")) then
         for i = 1, GetNumSpecializations() do
             local id, name, description, icon, role, primaryStat = GetSpecializationInfo(i);
-            Collections.Load("function", "Specialization", name, icon, function() SetSpecialization(i); end);
+            Collections.Load("function", "Specialization", name, icon, function()
+                SetSpecialization(i);
+            end);
         end
 
         local configIDs = C_ClassTalents.GetConfigIDsBySpecID();
         for i in pairs(configIDs) do
             local configInfo = C_Traits.GetConfigInfo(configIDs[i]);
-            Collections.Load("function", "Specialization Loadout", configInfo.name, nil,
-                function() C_ClassTalents.LoadConfig(configIDs[i], true); end);
+            Collections.Load("function", "Specialization Loadout", configInfo.name, nil, function()
+                C_ClassTalents.LoadConfig(configIDs[i], true);
+            end);
         end
         local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
         for i in pairs(equipmentSetIDs) do
-            local name, iconFileID, setID, isEquipped, numItems, numEquipped, numInInventory, numLost, numIgnored =
-                C_EquipmentSet.GetEquipmentSetInfo(equipmentSetIDs[i])
-            Collections.Load("function", "Equipment Set", name, iconFileID,
-                function() C_EquipmentSet.UseEquipmentSet(equipmentSetIDs[i]); end);
+            local name, iconFileID, setID, isEquipped, numItems, numEquipped, numInInventory, numLost, numIgnored = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetIDs[i])
+            Collections.Load("function", "Equipment Set", name, iconFileID, function()
+                C_EquipmentSet.UseEquipmentSet(equipmentSetIDs[i]);
+            end);
         end
     end
 end
@@ -274,20 +291,48 @@ function Collections.LoadConsumables()
 end
 
 function Collections.LoadSpells()
-    -- local tabs = GetNumSpellTabs()
-    -- for t = 1, tabs do
-    --     local tabName, texture, offset, numSpells = GetSpellTabInfo(t);
-    --     for i = offset + 1, offset + numSpells do
-    --         local name, rank = GetSpellBookItemName(i, Enum.SpellBookSpellBank.Player);
-    --         local spell = C_SpellBook.GetSpellBookItemInfo(i, Enum.SpellBookSpellBank.Player);
-    --         local icon = C_Spell.GetSpellTexture(spell["spellID"]);
-    --         local isPassive = C_Spell.IsSpellPassive(i, Enum.SpellBookSpellBank.Player);
-    --         local isUsable, _ = C_Spell.IsSpellUsable(i, Enum.SpellBookSpellBank.Player);
-    --         if (rank and name and isUsable and not isPassive and spell["type"] ~= "FUTURESPELL") then
-    --             Collections.Load("macrotext", "Spell", name, icon, SLASH_CAST1 .. " " .. name);
-    --         end
-    --     end
-    -- end
+    local lines = C_SpellBook.GetNumSpellBookSkillLines()
+    local portals = {
+        [84] = true, -- Hero's Path: Hero's Path: Mists of Pandaria
+        [96] = true, -- Hero's Path: Warlords of Draeneor
+        [220] = true, -- Hero's Path: Shadowlands
+        [222] = true, -- Hero's Path: Shadowlands Raids
+        [223] = true, -- Hero's Path: Battle for Azeroth
+        [224] = true, -- Hero's Path: Legion
+        [227] = true, -- Hero's Path: Dragonflight
+        [230] = true, -- Hero's Path: Cataclysm
+        [231] = true, -- Hero's Path: Dragonflight Raids
+        [232] = true, -- Hero's Path: The War Within
+        [242] = true, -- Hero's Path: The War Within Raids
+    };
+    for t = 1, lines do
+        local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(t);
+        for i = skillLineInfo.itemIndexOffset + 1, skillLineInfo.itemIndexOffset + skillLineInfo.numSpellBookItems do
+            local name, rank = C_SpellBook.GetSpellBookItemName(i, Enum.SpellBookSpellBank.Player);
+            local spellBookItemInfo = C_SpellBook.GetSpellBookItemInfo(i, Enum.SpellBookSpellBank.Player);
+
+            local spellType, spellID = spellBookItemInfo.itemType, spellBookItemInfo.actionID
+            local icon = C_SpellBook.GetSpellBookItemTexture(i, Enum.SpellBookSpellBank.Player);
+            local isPassive = C_SpellBook.IsSpellBookItemPassive(i, Enum.SpellBookSpellBank.Player);
+            local isUsable, _ = C_SpellBook.IsSpellBookItemUsable(i, Enum.SpellBookSpellBank.Player);
+            if (spellType == Enum.SpellBookItemType.Flyout) then
+                local _, _, numSlots = GetFlyoutInfo(spellID)
+                for s = 1, numSlots do
+                    local flyoutSpellID, _, _, spellName = GetFlyoutSlotInfo(spellID, s)
+                    local spellInfo = C_Spell.GetSpellInfo(flyoutSpellID)
+                    local name, icon = spellInfo.name, spellInfo.iconID
+                    local description = C_Spell.GetSpellDescription(flyoutSpellID)
+
+                    Collections.Load("macrotext", "Spell", name, icon, SLASH_CAST1 .. " " .. name);
+                    if (portals[spellID]) then
+                        Collections.Load("macrotext", "Spell", description, icon, SLASH_CAST1 .. " " .. name);
+                    end
+                end
+            elseif (spellType == Enum.SpellBookItemType.Spell and not isPassive) then
+                Collections.Load("macrotext", "Spell", name, icon, SLASH_CAST1 .. " " .. name);
+            end
+        end
+    end
 end
 
 function Collections.LoadCharacterMacros()
@@ -311,29 +356,65 @@ function Collections.LoadAccountMacros()
 end
 
 function Collections.LoadUIPanels()
-    Collections.Load("function", "UI", "Open Character Tab", nil, function() ToggleCharacter("PaperDollFrame"); end);
-    Collections.Load("function", "UI", "Open Pet Tab", nil, function() ToggleCharacter("PetPaperDollFrame"); end);
-    Collections.Load("function", "UI", "Open Reputation Tab", nil, function() ToggleCharacter("ReputationFrame"); end);
-    Collections.Load("function", "UI", "Open Currency Tab", nil, function() ToggleCharacter("TokenFrame"); end);
-    Collections.Load("function", "UI", "Open Adventure Guide", nil, function() ToggleEncounterJournal(); end);
-    Collections.Load("function", "UI", "Open Talents", nil, function() ToggleTalentFrame(); end);
-    Collections.Load("function", "UI", "Open Achievements", nil, function() ToggleAchievementFrame(); end);
-    Collections.Load("function", "UI", "Open Dungeon Finder", nil, function() PVEFrame_ToggleFrame("GroupFinderFrame", LFDParentFrame) end);
-    Collections.Load("function", "UI", "Open Raid Finder", nil, function() PVEFrame_ToggleFrame("GroupFinderFrame", RaidFinderFrame) end);
-    Collections.Load("function", "UI", "Open Premade Groups window", nil, function() PVEFrame_ToggleFrame("GroupFinderFrame", LFGListPVEStub) end);
-    Collections.Load("function", "UI", "Open PVP window", nil, function() TogglePVPUI() end);
-    Collections.Load("function", "UI", "Open Mounts Journal", nil, function() ToggleCollectionsJournal(1) end);
-    Collections.Load("function", "UI", "Open Pet Journal", nil, function() ToggleCollectionsJournal(2) end);
-    Collections.Load("function", "UI", "Open Toybox Journal", nil, function() ToggleCollectionsJournal(3) end);
-    Collections.Load("function", "UI", "Open Heirlooms Journal", nil, function() ToggleCollectionsJournal(4) end);
-    Collections.Load("function", "UI", "Open Appearances Journal", nil, function() ToggleCollectionsJournal(5) end);
-    Collections.Load("function", "UI", "Open Weekly Rewards", nil, function() WeeklyRewards_ShowUI() end);
+    Collections.Load("function", "UI", "Open Character Tab", nil, function()
+        ToggleCharacter("PaperDollFrame");
+    end);
+    Collections.Load("function", "UI", "Open Pet Tab", nil, function()
+        ToggleCharacter("PetPaperDollFrame");
+    end);
+    Collections.Load("function", "UI", "Open Reputation Tab", nil, function()
+        ToggleCharacter("ReputationFrame");
+    end);
+    Collections.Load("function", "UI", "Open Currency Tab", nil, function()
+        ToggleCharacter("TokenFrame");
+    end);
+    Collections.Load("function", "UI", "Open Adventure Guide", nil, function()
+        ToggleEncounterJournal();
+    end);
+    Collections.Load("function", "UI", "Open Talents", nil, function()
+        ToggleTalentFrame();
+    end);
+    Collections.Load("function", "UI", "Open Achievements", nil, function()
+        ToggleAchievementFrame();
+    end);
+    Collections.Load("function", "UI", "Open Dungeon Finder", nil, function()
+        PVEFrame_ToggleFrame("GroupFinderFrame", LFDParentFrame)
+    end);
+    Collections.Load("function", "UI", "Open Raid Finder", nil, function()
+        PVEFrame_ToggleFrame("GroupFinderFrame", RaidFinderFrame)
+    end);
+    Collections.Load("function", "UI", "Open Premade Groups window", nil, function()
+        PVEFrame_ToggleFrame("GroupFinderFrame", LFGListPVEStub)
+    end);
+    Collections.Load("function", "UI", "Open PVP window", nil, function()
+        TogglePVPUI()
+    end);
+    Collections.Load("function", "UI", "Open Mounts Journal", nil, function()
+        ToggleCollectionsJournal(1)
+    end);
+    Collections.Load("function", "UI", "Open Pet Journal", nil, function()
+        ToggleCollectionsJournal(2)
+    end);
+    Collections.Load("function", "UI", "Open Toybox Journal", nil, function()
+        ToggleCollectionsJournal(3)
+    end);
+    Collections.Load("function", "UI", "Open Heirlooms Journal", nil, function()
+        ToggleCollectionsJournal(4)
+    end);
+    Collections.Load("function", "UI", "Open Appearances Journal", nil, function()
+        ToggleCollectionsJournal(5)
+    end);
+    Collections.Load("function", "UI", "Open Weekly Rewards", nil, function()
+        WeeklyRewards_ShowUI()
+    end);
 end
 
 function Collections.LoadLibDataBrokerLaunchers()
     for name, dataobj in ldb:DataObjectIterator() do
         if dataobj.type == 'launcher' then
-            Collections.Load("function", "DataBroker Launcher", dataobj.label or name, dataobj.icon, function(s, btn) dataobj.OnClick(s, btn) end);
+            Collections.Load("function", "DataBroker Launcher", dataobj.label or name, dataobj.icon, function(s, btn)
+                dataobj.OnClick(s, btn)
+            end);
         end
     end
 end

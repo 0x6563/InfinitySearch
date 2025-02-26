@@ -25,8 +25,8 @@ function addon:CreateFrames()
             if not addon.lock.editMode then
                 return;
             end
-            if button == "LeftButton" 
-                then self:StartMoving() 
+            if button == "LeftButton"
+                then self:StartMoving();
             end
         end)
         f:SetScript("OnMouseUp", function(self, button)

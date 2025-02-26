@@ -284,7 +284,7 @@ function addon:RefreshCollectionsConfig()
         Config.ToggleFactory("Macros: Character", "collections", "characterMacros", ""),
         Config.ToggleFactory("Mounts", "collections", "mounts", ""),
         Config.ToggleFactory("Pets", "collections", "pets", ""),
-        Config.ToggleFactory("Spells", "collections", "spells", true),
+        Config.ToggleFactory("Spells", "collections", "spells", ""),
         Config.ToggleFactory("Toys", "collections", "toys", ""),
         Config.ToggleFactory("UI Panels", "collections", "ui", ""),
         Config.ToggleFactory("Experimental", "collections", "experimental", ""),
